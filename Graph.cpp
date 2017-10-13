@@ -7,13 +7,19 @@ Graph::Graph(const char* filename)
 {
   ifstream graphFile(filename);  
   if(graphFile.is_open()){
-    while(getline(graphFile, line)){
-      std::cout << line << '\n'
+    float x,y;
+    bool traverse;
+    while ( graphFile >> x >> y >> traverse){
+      cout << x << " " << y << " " << traverse << endl;
     }
     graphFile.close();
   }   
-  else std::cout << "Could not open file" << std::endl;
+  else cout << "Could not open file" << endl;
+}
+Graph::~Graph(){
+
 };
-~Graph(){};
 int Graph::GetNumberOfNodes(){};
-int Graph::GetVisibility(int node_j, int node_i){};
+float Graph::GetLengthEdge(int node_j, int node_i){};
+float Graph::GetVisibility(int node_j, int node_i){};
+
