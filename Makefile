@@ -20,3 +20,5 @@ clean :
 	rm -f $(OBJS) $(EXECUTABLE)
 
 LineSweeper.o : Graph.o
+
+Graph.o : Graph.cpp Graph.h

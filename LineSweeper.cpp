@@ -2,7 +2,8 @@
 #include "Graph.h"
 using namespace std;
 int main(){
-  const char * filename = "dummy.txt";
-  Graph * graph = new Graph(filename);
+  const char * nodeFileName = "nodes.txt";
+  const char * edgeFileName = "edges.txt";
+  Graph * graph = new Graph(nodeFileName, edgeFileName);
   delete graph;
 }

@@ -2,24 +2,46 @@
 #include <fstream>
 #include <iostream> // TODO: remove
 
-using namespace std;
-Graph::Graph(const char* filename)
+Graph::Graph(const char * nodeFileName, const char * edgeFileName)
 {
-  ifstream graphFile(filename);  
-  if(graphFile.is_open()){
-    float x,y;
-    bool traverse;
-    while ( graphFile >> x >> y >> traverse){
-      cout << x << " " << y << " " << traverse << endl;
-    }
-    graphFile.close();
-  }   
-  else cout << "Could not open file" << endl;
+  GraphFromFile(nodeFileName, edgeFileName);
 }
 Graph::~Graph(){
 
 };
+bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
+  std::ifstream nodeFile(nodeFileName);  
+  if(nodeFile.is_open()){
+    float x,y;
+    while ( nodeFile >> numberOfNodes >> x >> y ){
+      numberOfNodes++;
+      std::cout << "Node: "<< numberOfNodes << ",\tx = " << x << ",\ty = " << y << std::endl;
+      xNode.push_back(x);
+      yNode.push_back(y);
+    }
+    nodeFile.close();
+  }   
+  else std::cout << "Could not open node file" << std::endl;
+  
+  edgesConnected.resize(numberOfNodes * numberOfNodes);
+  std::ifstream edgeFile(edgeFileName);  
+  if(edgeFile.is_open()){
+    int iNode, jNode;
+    while ( edgeFile >> iNode >> jNode ){
+      edgesConnected[iNode*numberOfNodes + jNode] = 1;
+    }
+    edgeFile.close();
+  }   
+  else std::cout << "Could not open edge file" << std::endl;
+
+  for(int i = 0; i < numberOfNodes; i++){
+    for(int j = 0; j < numberOfNodes; j++){
+      std::cout << edgesConnected[i*numberOfNodes + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
 int Graph::GetNumberOfNodes(){};
-float Graph::GetLengthEdge(int node_j, int node_i){};
-float Graph::GetVisibility(int node_j, int node_i){};
+float Graph::GetLengthEdge(const int node_j, const int node_i){};
+float Graph::GetVisibility(const int node_j, const int node_i){};
 
