@@ -11,11 +11,12 @@ class Graph
     float GetLengthEdge(const int node1, const int node2);
     float GetVisibility(const int node1, const int node2);
     bool GraphFromFile(const char * nodeFileName, const char * edgeFileName);
+    void printConnectedEdges();
   private:
-    std::vector<float> xNode;
-    std::vector<float> yNode;
-    int numberOfNodes;
-    std::vector< bool > edgesConnected;
+    std::vector<float> xNode_;
+    std::vector<float> yNode_;
+    int numberOfNodes_;
+    std::vector< bool > edgesConnected_;
 
 };
 #endif
