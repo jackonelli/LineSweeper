@@ -11,7 +11,8 @@ class Graph
     float GetLengthEdge(const int node1, const int node2);
     float GetVisibility(const int node1, const int node2);
     bool GraphFromFile(const char * nodeFileName, const char * edgeFileName);
-    void printConnectedEdges();
+    void PrintConnectedEdges();
+    float LengthNearestNeighbourPath();
   private:
     std::vector<float> xNode_;
     std::vector<float> yNode_;

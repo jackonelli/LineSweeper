@@ -4,7 +4,7 @@ EXECUTABLE = LineSweeper
 CC = g++
 LIBS = 
 OPTFLAGS = -O3
-CFLAGS = $(OPTFLAGS)
+CFLAGS = $(OPTFLAGS) -std=c++11
 LDFLAGS = 
 .PHONY : all
 
