@@ -16,9 +16,9 @@ bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
   std::ifstream nodeFile(nodeFileName);  
   if(nodeFile.is_open()){
     float x,y;
-    while ( nodeFile >> numberOfNodes_ >> x >> y ){
+    while ( nodeFile >> x >> y ){
       numberOfNodes_++;
-      //std::cout << "Node: "<< numberOfNodes_ << ",\tx = " << x << ",\ty = " << y << std::endl;
+      std::cout << "Node: "<< numberOfNodes_ << ",\tx = " << x << ",\ty = " << y << std::endl;
       xNode_.push_back(x);
       yNode_.push_back(y);
     }
@@ -81,25 +81,31 @@ float Graph::LengthNearestNeighbourPath(){
   int startingNode = rand() % numberOfNodes_;
   int currentNode, nextNode;
   std::vector<int> unvisitedNodes(numberOfNodes_);
+  std::vector<int> path;
+  path.push_back(startingNode);
   std::iota(unvisitedNodes.begin(), unvisitedNodes.end(), 0);
   currentNode = startingNode;
   unvisitedNodes.erase(unvisitedNodes.begin() + startingNode);
   for(int i = 0; i < numberOfNodes_-1; i++){
-      index = 0;
-      minDist = 100;
-      minIndex = -1;
-      for (auto node = unvisitedNodes.begin(); node != unvisitedNodes.end(); ++node, ++index){
-        dist = GetLengthEdge(*node, currentNode);
-        std::cout << *node << ", ";
-        if(dist < minDist){
-          minDist = dist;
-          minIndex = index;
-        }
+    index = 0;
+    minDist = 100;
+    minIndex = -1;
+    for (auto node = unvisitedNodes.begin(); node != unvisitedNodes.end(); ++node, ++index){
+      dist = GetLengthEdge(*node, currentNode);
+      if(dist < minDist){
+        minDist = dist;
+        minIndex = index;
       }
-      unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
-      totalDist += minDist;
-      std::cout << "\n";
     }
+    currentNode = minIndex;
+    path.push_back(unvisitedNodes[minIndex]);
+    unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
+    totalDist += minDist;
+    std::cout << "\n";
+  }
+  std::cout << "Nearest neighbour path:\n";
+  for(auto node : path) std::cout << node << ", ";
+  std::cout << "\n";
   return totalDist;
 };
 

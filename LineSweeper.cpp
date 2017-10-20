@@ -6,9 +6,8 @@ int main(){
   const char * nodeFileName = "graph/nodes.txt";
   const char * edgeFileName = "graph/edges.txt";
   Graph * graph = new Graph(nodeFileName, edgeFileName);
-  float aba = graph->GetVisibility(2, 1);
   //graph->PrintConnectedEdges();
-  aba = graph->LengthNearestNeighbourPath();
+  float aba = graph->LengthNearestNeighbourPath();
   std::cout << aba << std::endl;
   delete graph;
 }
