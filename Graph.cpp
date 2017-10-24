@@ -16,9 +16,9 @@ bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
   std::ifstream nodeFile(nodeFileName);  
   if(nodeFile.is_open()){
     float x,y;
-    while ( nodeFile >> x >> y ){
+    while ( nodeFile >>  x >> y ){
       numberOfNodes_++;
-      std::cout << "Node: "<< numberOfNodes_ << ",\tx = " << x << ",\ty = " << y << std::endl;
+      //std::cout << "Node: "<< numberOfNodes_ << ",\tx = " << x << ",\ty = " << y << std::endl;
       xNode_.push_back(x);
       yNode_.push_back(y);
     }
@@ -92,13 +92,16 @@ float Graph::LengthNearestNeighbourPath(){
     minIndex = -1;
     for (auto node = unvisitedNodes.begin(); node != unvisitedNodes.end(); ++node, ++index){
       dist = GetLengthEdge(*node, currentNode);
+      if(currentNode ==7){
+        std::cout << "7-"<<*node << ": "<< dist << "\n";
+      }
       if(dist < minDist){
         minDist = dist;
         minIndex = index;
       }
     }
-    currentNode = minIndex;
-    path.push_back(unvisitedNodes[minIndex]);
+    currentNode = unvisitedNodes[minIndex];
+    path.push_back(currentNode);
     unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
     totalDist += minDist;
     std::cout << "\n";
