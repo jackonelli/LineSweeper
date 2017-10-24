@@ -1,4 +1,4 @@
-SOURCE = LineSweeper.cpp Graph.cpp
+SOURCE = LineSweeper.cpp AntSystem.cpp Graph.cpp
 OBJS = $(SOURCE:.cpp=.o)
 EXECUTABLE = LineSweeper
 CC = g++
@@ -19,6 +19,8 @@ $(EXECUTABLE) : $(OBJS)
 clean : 
 	rm -f $(OBJS) $(EXECUTABLE)
 
-LineSweeper.o : Graph.o
+LineSweeper.o : AntSystem.o
+
+AntSystem.o : AntSystem.cpp Graph.o
 
 Graph.o : Graph.cpp Graph.h
