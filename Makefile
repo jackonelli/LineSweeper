@@ -21,6 +21,6 @@ clean :
 
 LineSweeper.o : AntSystem.o
 
-AntSystem.o : AntSystem.cpp Graph.o
+AntSystem.o : AntSystem.cpp AntSystem.h Graph.o
 
 Graph.o : Graph.cpp Graph.h

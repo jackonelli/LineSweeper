@@ -92,9 +92,6 @@ float Graph::LengthNearestNeighbourPath(){
     minIndex = -1;
     for (auto node = unvisitedNodes.begin(); node != unvisitedNodes.end(); ++node, ++index){
       dist = GetLengthEdge(*node, currentNode);
-      if(currentNode ==7){
-        std::cout << "7-"<<*node << ": "<< dist << "\n";
-      }
       if(dist < minDist){
         minDist = dist;
         minIndex = index;
@@ -112,3 +109,10 @@ float Graph::LengthNearestNeighbourPath(){
   return totalDist;
 };
 
+float Graph::GetPathLength(const std::vector<int> path){
+  const int n = path.size();
+  float pathLength = 0;
+  for( int i = 0; i < (n-1); i++){
+    pathLength += GetLengthEdge(path[i+1], path[i]);
+  }
+};

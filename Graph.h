@@ -13,6 +13,7 @@ class Graph
     bool GraphFromFile(const char * nodeFileName, const char * edgeFileName);
     void PrintConnectedEdges();
     float LengthNearestNeighbourPath();
+    float GetPathLength(const std::vector<int> path);
   private:
     std::vector<float> xNode_;
     std::vector<float> yNode_;
