@@ -10,3 +10,6 @@ No more! Unleash this ant colony and let them find the optimal path!
  - Cmake
  - Wasm check
  - Original problem verify
+
+## THEORY
+https://pubsonline.informs.org/doi/pdf/10.1287/ited.2015.0150
