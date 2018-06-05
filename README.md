@@ -5,11 +5,14 @@ What is the optimal way of sweeping the lines?
 
 No more! Unleash this ant colony and let them find the optimal path!
 
-## TODO:
+## TODO
  - Unit tests
  - Cmake
  - Wasm check
  - Original problem verify
+
+## RESOURCES
+Boost Graph
 
 ## THEORY
 https://pubsonline.informs.org/doi/pdf/10.1287/ited.2015.0150
