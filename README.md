@@ -13,3 +13,6 @@ No more! Unleash this ant colony and let them find the optimal path!
 
 ## THEORY
 https://pubsonline.informs.org/doi/pdf/10.1287/ited.2015.0150
+
+## NON-THEORY
+https://www.quora.com/What-is-the-quickest-way-to-sweep-the-lines-of-a-clay-tennis-court-after-a-game
