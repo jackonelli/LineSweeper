@@ -13,6 +13,7 @@ No more! Unleash this ant colony and let them find the optimal path!
 
 ## RESOURCES
 Boost Graph
+ - Clp https://projects.coin-or.org/Clp
 
 ## THEORY
 https://pubsonline.informs.org/doi/pdf/10.1287/ited.2015.0150
