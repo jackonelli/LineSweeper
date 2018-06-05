@@ -5,7 +5,7 @@
 class AntSystem
 {
   public:
-    AntSystem(const char * nodeFileName, const char * edgeFileName, const int numberOfAnts, const float alpha, const float beta, const float targetPathLength);
+    AntSystem(const char * nodeFileName, const char * edgeFileName, const int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
 
     ~AntSystem();
 
@@ -17,15 +17,13 @@ class AntSystem
 
     void Run();
 
-
   private:
-    // Make const?
-    Graph graph;
-    int numberOfAnts_;
-    float alpha_;
-    float beta_;
-    float targetPathLength_;
-    float evaporation;
+    Graph graph; // How to make graph const?
+    const int numberOfAnts_;
+    const float alpha_;
+    const float beta_;
+    const float targetPathLength_;
+    const float evaporation_;
     std::vector<float> pheromoneLevel_;
 };
 #endif

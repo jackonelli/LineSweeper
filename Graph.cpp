@@ -60,6 +60,7 @@ float Graph::GetVisibility(const int jNode, const int iNode){
     return 1/GetLengthEdge(jNode, iNode);
   } else if(jNode == iNode) {
     std::cout << "Same node" << std::endl;
+    return 0;
   } else {
     std::cout << "Index out of range" << std::endl;
     return -1;
@@ -101,6 +102,7 @@ float Graph::LengthNearestNeighbourPath(){
     path.push_back(currentNode);
     unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
     totalDist += minDist;
+    std::cout << totalDist << std::endl;
     std::cout << "\n";
   }
   std::cout << "Nearest neighbour path:\n";
