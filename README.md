@@ -15,6 +15,7 @@ No more! Unleash this ant colony and let them find the optimal path!
  - Boost Graph
  - Clp https://projects.coin-or.org/Clp
  - Draw graph: http://sigmajs.org/ (Put path index on graph edge instead of node? Arrows for direction also perhaps)
+ - Handle json: https://github.com/nlohmann/json
 
 ## THEORY
 https://pubsonline.informs.org/doi/pdf/10.1287/ited.2015.0150
