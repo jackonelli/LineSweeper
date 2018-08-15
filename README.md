@@ -6,6 +6,7 @@ What is the optimal way of sweeping the lines?
 No more! Unleash this ant colony and let them find the optimal path!
 
 ## TODO
+ - txt to json for data
  - Unit tests
  - Cmake
  - Wasm check
