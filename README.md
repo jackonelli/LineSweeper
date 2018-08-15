@@ -5,10 +5,28 @@ What is the optimal way of sweeping the lines?
 
 No more! Unleash this ant colony and let them find the optimal path!
 
+## DEPENDENCIES
+
+### Sigma js
+Graphs drawn with sigmajs http://sigmajs.org/, from their installation guide:
+To use it, clone the repository:
+
+```
+git clone git@github.com:jacomyal/sigma.js.git
+```
+
+To build the code:
+
+ - Install [Node.js](http://nodejs.org/).
+ - Install [gjslint](https://developers.google.com/closure/utilities/docs/linter_howto?hl=en).
+ - Use `npm install` to install sigma development dependencies.
+ - Use `npm run build` to minify the code with [Uglify](https://github.com/mishoo/UglifyJS). The minified file `sigma.min.js` will then be accessible in the `build/` folder.
+
 ## TODO
  - txt to json for data
  - Unit tests
- - Cmake
+ - ~~Cmake~~
+ - ~~javascript graph~~
  - Wasm check
  - Original problem verify
 
