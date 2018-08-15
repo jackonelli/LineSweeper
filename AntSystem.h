@@ -13,16 +13,20 @@ class AntSystem
 
     std::vector<int> GeneratePath(const int ant, const std::vector<float> * pheromoneLevel_);
 
+    int GetNextNode(const int currentNode, const std::vector<int> unvisitedNodes);
+
     void ComputeDeltaPheromoneLevels(std::vector<float> * deltaPheromoneLevels, const std::vector<int> * path, float pathLength);
+
+    float GetPheromoneLevel(const int node1, const int node2);
 
     void Run();
 
   private:
     Graph graph; // How to make graph const?
     const int numberOfAnts_;
+    const float targetPathLength_;
     const float alpha_;
     const float beta_;
-    const float targetPathLength_;
     const float evaporation_;
     std::vector<float> pheromoneLevel_;
 };
