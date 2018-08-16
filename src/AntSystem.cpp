@@ -6,7 +6,8 @@
 
 AntSystem::AntSystem(const char * nodeFileName, const char * edgeFileName, const int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
   : graph(nodeFileName, edgeFileName), numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
-  InitPheromoneLevels();
+  //InitPheromoneLevels();
+  graph.LengthNearestNeighbourPath();
 };
 
 AntSystem::~AntSystem(){
@@ -14,8 +15,8 @@ AntSystem::~AntSystem(){
 
 void AntSystem::InitPheromoneLevels(){
   int numberOfNodes = graph.GetNumberOfNodes();
-  float D_NN = graph.LengthNearestNeighbourPath();
-  pheromoneLevel_ = std::vector<float>(numberOfNodes * numberOfNodes, D_NN);
+  float nearestNeighbourDistance = graph.LengthNearestNeighbourPath();
+  pheromoneLevel_ = std::vector<float>(numberOfNodes * numberOfNodes, nearestNeighbourDistance);
 };
 
 void AntSystem::ComputeDeltaPheromoneLevels(std::vector<float> * deltaPheromone, const std::vector<int> * path, const float pathLength){

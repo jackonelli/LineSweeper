@@ -29,11 +29,12 @@ bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
     return false;
   }
   edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
-  std::ifstream edgeFile(edgeFileName);  
+  std::ifstream edgeFile(edgeFileName);
   if(edgeFile.is_open()){
     int iNode, jNode;
     while ( edgeFile >> iNode >> jNode ){
       edgesConnected_[iNode*numberOfNodes_ + jNode] = 1;
+      edgesConnected_[jNode*numberOfNodes_ + iNode] = 1; // EPA make symmetric
     }
     edgeFile.close();
   }
@@ -78,47 +79,41 @@ bool Graph::ValidateEdge(const int jNode, const int iNode) {
   return iBounded && jBounded;
 }
 
-void Graph::PrintConnectedEdges(){
-  for(int i = 0; i < numberOfNodes_; i++){
-    for(int j = 0; j < numberOfNodes_; j++){
-      std::cout << edgesConnected_[i*numberOfNodes_ + j] << " ";
-    }
-    std::cout << std::endl;
-  }
-};
-
 float Graph::LengthNearestNeighbourPath(){
   float dist, minDist;
   float totalDist = 0;
-  int startingNode = rand() % numberOfNodes_;
-  int index, minIndex;
+  int startingNode = 13; // rand() % numberOfNodes_;
+  int minIndex;
+  int index;
   int currentNode;
   std::vector<int> unvisitedNodes(numberOfNodes_);
   std::vector<int> path;
+
   path.push_back(startingNode);
   std::iota(unvisitedNodes.begin(), unvisitedNodes.end(), 0);
   currentNode = startingNode;
   unvisitedNodes.erase(unvisitedNodes.begin() + startingNode);
+
   for(int i = 0; i < numberOfNodes_-1; i++){
-    index = 0;
     minDist = 100;
-    minIndex = -1;
+    index = 0;
     for (auto node : unvisitedNodes) {
       dist = GetLengthEdge(node, currentNode);
+      std::cout << dist << std::endl;
       if(dist < minDist){
         minDist = dist;
         minIndex = index;
       }
+      index++;
     }
     currentNode = unvisitedNodes[minIndex];
     path.push_back(currentNode);
     unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
     totalDist += minDist;
-    std::cout << totalDist << std::endl;
-    std::cout << "\n";
+    std::cout << "Tot dist: " <<totalDist << " Going to: " << currentNode << std::endl;
   }
   std::cout << "Nearest neighbour path:\n";
-  //for(auto node : path) std::cout << node << ", ";
+  for(auto node : path) std::cout << node << " --> ";
   return totalDist;
 };
 
@@ -130,3 +125,19 @@ float Graph::GetPathLength(const std::vector<int> path){
   }
   return pathLength;
 };
+
+void Graph::PrintNodes(){
+  for(int i = 0; i < numberOfNodes_; i++){
+      std::cout << "Node: "<< i << ",\tx = " << xNode_[i] << ",\ty = " << yNode_[i] << std::endl;
+  }
+};
+
+void Graph::PrintConnectedEdges(){
+  for(int i = 0; i < numberOfNodes_; i++){
+    for(int j = 0; j < numberOfNodes_; j++){
+      std::cout << edgesConnected_[i*numberOfNodes_ + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+};
+
