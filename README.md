@@ -8,7 +8,7 @@ No more! Unleash this ant colony and let them find the optimal path!
 ## DEPENDENCIES
 
 ### Sigma js
-Graphs drawn with sigmajs http://sigmajs.org/, from their installation guide:
+Graphs drawn with [sigmajs](http://sigmajs.org/), from their installation guide:
 To use it, clone the repository:
 
 ```
@@ -23,8 +23,9 @@ To build the code:
  - Use `npm run build` to minify the code with [Uglify](https://github.com/mishoo/UglifyJS). The minified file `sigma.min.js` will then be accessible in the `build/` folder.
 
 ## TODO
+ - Better datastructure for paths
  - txt to json for data
- - Unit tests
+ - ~~Unit tests~~
  - ~~Cmake~~
  - ~~javascript graph~~
  - Wasm check
@@ -33,7 +34,6 @@ To build the code:
 ## RESOURCES
  - Boost Graph
  - Clp https://projects.coin-or.org/Clp
- - Draw graph: http://sigmajs.org/ (Put path index on graph edge instead of node? Arrows for direction also perhaps)
  - Handle json: https://github.com/nlohmann/json
 
 ## THEORY

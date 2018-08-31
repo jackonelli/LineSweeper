@@ -1,4 +1,5 @@
-add_executable(linesweeper LineSweeper.cpp AntSystem.cpp Graph.cpp)
-install(TARGETS linesweeper DESTINATION build)
-add_compile_options(-std=c++11)
-
+add_library(Graph Graph.h Graph.cpp)
+add_library(AntSystem AntSystem.h AntSystem.cpp)
+add_executable(linesweeper LineSweeper.cpp)
+target_link_libraries(linesweeper AntSystem Graph)
+install(TARGETS linesweeper DESTINATION ${CMAKE_BINARY_DIR})
