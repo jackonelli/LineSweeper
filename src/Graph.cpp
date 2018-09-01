@@ -33,10 +33,10 @@ bool Graph::GraphFromFile(){
   edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
   std::ifstream edgeFile(edgeFileName_);
   if(edgeFile.is_open()){
-    int iNode, jNode;
-    while ( edgeFile >> iNode >> jNode ){
-      edgesConnected_[iNode*numberOfNodes_ + jNode] = 1;
-      edgesConnected_[jNode*numberOfNodes_ + iNode] = 1; // EPA make symmetric
+    int node2, node1;
+    while ( edgeFile >> node2 >> node1 ){
+      edgesConnected_[node2*numberOfNodes_ + node1] = 1;
+      edgesConnected_[node1*numberOfNodes_ + node2] = 1; // EPA make symmetric
     }
     edgeFile.close();
   }
@@ -48,18 +48,36 @@ bool Graph::GraphFromFile(){
 }
 
 void Graph::AddNode(float x, float y){
-  xNode_.push_back(x);
-  yNode_.push_back(y);
-  numberOfNodes_++;
+  /* TODO: Add duplicate node check.
+   *
+   */
+  bool novelNode = true;
+  for(auto &kv : nodes_){
+    if(x == kv.second.x && y == kv.second.y){
+      novelNode = false;
+      std::cout << "Node already exists, node: " << kv.first << std::endl;
+    }
+  }
+  bool idInNodes = nodes_.count(numberOfNodes_) > 0;
+  if(novelNode && !idInNodes){
+    Node node;
+    node.x = x;
+    node.y = y;
+    nodes_[numberOfNodes_] = node;
+    numberOfNodes_++;
+  }
 };
 
 int Graph::GetNumberOfNodes(){
   return numberOfNodes_;
 };
-float Graph::GetLengthEdge(const int jNode, const int iNode){
-  if (ValidateEdge(jNode, iNode)){
-    float deltaX = xNode_[jNode] - xNode_[iNode];
-    float deltaY = yNode_[jNode] - yNode_[iNode];
+
+float Graph::GetLengthEdge(const int node1_id, const int node2_id){
+  if (ValidateEdge(node1_id, node2_id)){
+    Node node1 = nodes_[node1_id];
+    Node node2 = nodes_[node2_id];
+    float deltaX = node1.x - node2.x;
+    float deltaY = node1.y - node2.y;
     return sqrtf( deltaX * deltaX + deltaY * deltaY );
   } else {
     std::cout << "Invalid edge" << std::endl;
@@ -67,20 +85,20 @@ float Graph::GetLengthEdge(const int jNode, const int iNode){
   }
 };
 
-float Graph::GetVisibility(const int jNode, const int iNode){
-  if (ValidateEdge(jNode, iNode)){
-      return 1 / GetLengthEdge(jNode, iNode);
+float Graph::GetVisibility(const int node1, const int node2){
+  if (ValidateEdge(node1, node2)){
+      return 1 / GetLengthEdge(node1, node2);
   } else {
     std::cout << "Invalid edge" << std::endl;
     return -1;
   }
 };
 
-bool Graph::ValidateEdge(const int jNode, const int iNode) {
-  bool iBounded = iNode < numberOfNodes_ && iNode >= 0;
-  bool jBounded = jNode < numberOfNodes_ && jNode >= 0;
-  bool differentNodes = jNode != iNode;
-  return iBounded && jBounded && differentNodes;
+bool Graph::ValidateEdge(const int node1, const int node2) {
+  bool bounded1 = node1 < numberOfNodes_ && node1 >= 0;
+  bool bounded2 = node2 < numberOfNodes_ && node2 >= 0;
+  bool differentNodes = node1 != node2;
+  return bounded1 && bounded2 && differentNodes;
 };
 
 float Graph::LengthNearestNeighbourPath(){
@@ -130,9 +148,11 @@ float Graph::GetPathLength(const std::vector<int> path){
 };
 
 void Graph::PrintNodes(){
-  for(int i = 0; i < numberOfNodes_; i++){
-      std::cout << "Node: "<< i << ",\tx = " << xNode_[i] << ",\ty = " << yNode_[i] << std::endl;
-  }
+  for(auto &kv : nodes_){
+      int id = kv.first;
+      Node node = kv.second;
+      std::cout << "Node: "<< id << ",\tx = " << node.x << ",\ty = " << node.y << std::endl;
+  };
 };
 
 void Graph::PrintConnectedEdges(){

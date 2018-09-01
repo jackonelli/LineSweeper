@@ -10,6 +10,9 @@ BOOST_AUTO_TEST_CASE( NumberOfNodes )
  BOOST_CHECK_EQUAL(graph.GetNumberOfNodes(), 0);
  graph.AddNode(1.0, 0.0);
  BOOST_CHECK_EQUAL(graph.GetNumberOfNodes(), 1);
+ // Duplicate
+ graph.AddNode(1.0, 0.0);
+ BOOST_CHECK_EQUAL(graph.GetNumberOfNodes(), 1);
 }
 
 BOOST_AUTO_TEST_CASE( ValidateEdge )

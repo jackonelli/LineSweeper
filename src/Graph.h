@@ -1,6 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 #include <vector>
+#include <unordered_map>
 
 class Graph
 {
@@ -22,10 +23,14 @@ class Graph
     void PrintPath(const std::vector<int> path);
 
   private:
+    typedef struct {
+      float x;
+      float y;
+    } Node;
     const char * nodeFileName_, * edgeFileName_;
-    std::vector<float> xNode_;
-    std::vector<float> yNode_;
     int numberOfNodes_;
+    std::unordered_map <int, Node> nodes_;
     std::vector<bool> edgesConnected_;
+
 };
 #endif
