@@ -5,22 +5,24 @@
 #include <iostream> // TODO: remove
 #include <numeric>
 
-Graph::Graph(const char * nodeFileName, const char * edgeFileName)
+Graph::Graph()
 {
-  GraphFromFile(nodeFileName, edgeFileName);
+  numberOfNodes_ = 0;
+}
+
+Graph::Graph(const char * nodeFileName, const char * edgeFileName) : nodeFileName_(nodeFileName), edgeFileName_(edgeFileName)
+{
+  numberOfNodes_ = 0;
 }
 Graph::~Graph(){
 
 };
-bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
-  std::ifstream nodeFile(nodeFileName);
+bool Graph::GraphFromFile(){
+  std::ifstream nodeFile(nodeFileName_);
   if(nodeFile.is_open()){
     float x,y;
     while ( nodeFile >>  x >> y ){
-      numberOfNodes_++;
-      //std::cout << "Node: "<< numberOfNodes_ << ",\tx = " << x << ",\ty = " << y << std::endl;
-      xNode_.push_back(x);
-      yNode_.push_back(y);
+      AddNode(x, y);
     }
     nodeFile.close();
   }
@@ -29,7 +31,7 @@ bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
     return false;
   }
   edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
-  std::ifstream edgeFile(edgeFileName);
+  std::ifstream edgeFile(edgeFileName_);
   if(edgeFile.is_open()){
     int iNode, jNode;
     while ( edgeFile >> iNode >> jNode ){
@@ -45,6 +47,12 @@ bool Graph::GraphFromFile(const char * nodeFileName, const char * edgeFileName){
   return true;
 }
 
+void Graph::AddNode(float x, float y){
+  xNode_.push_back(x);
+  yNode_.push_back(y);
+  numberOfNodes_++;
+};
+
 int Graph::GetNumberOfNodes(){
   return numberOfNodes_;
 };
@@ -54,21 +62,16 @@ float Graph::GetLengthEdge(const int jNode, const int iNode){
     float deltaY = yNode_[jNode] - yNode_[iNode];
     return sqrtf( deltaX * deltaX + deltaY * deltaY );
   } else {
-    std::cout << "Index out of range" << std::endl;
+    std::cout << "Invalid edge" << std::endl;
     return -1;
   }
 };
 
 float Graph::GetVisibility(const int jNode, const int iNode){
   if (ValidateEdge(jNode, iNode)){
-    if(jNode != iNode) {
       return 1 / GetLengthEdge(jNode, iNode);
-    } else {
-      std::cout << "Same node" << std::endl;
-      return 0;
-    }
   } else {
-    std::cout << "Index out of range" << std::endl;
+    std::cout << "Invalid edge" << std::endl;
     return -1;
   }
 };
@@ -76,15 +79,19 @@ float Graph::GetVisibility(const int jNode, const int iNode){
 bool Graph::ValidateEdge(const int jNode, const int iNode) {
   bool iBounded = iNode < numberOfNodes_ && iNode >= 0;
   bool jBounded = jNode < numberOfNodes_ && jNode >= 0;
-  return iBounded && jBounded;
-}
+  bool differentNodes = jNode != iNode;
+  return iBounded && jBounded && differentNodes;
+};
 
 float Graph::LengthNearestNeighbourPath(){
+  const int startingNode = rand() % numberOfNodes_;
+  return LengthNearestNeighbourPath(startingNode);
+};
+
+float Graph::LengthNearestNeighbourPath(const int startingNode){
   float dist, minDist;
   float totalDist = 0;
-  int startingNode = 13; // rand() % numberOfNodes_;
-  int minIndex;
-  int index;
+  int index, minIndex;
   int currentNode;
   std::vector<int> unvisitedNodes(numberOfNodes_);
   std::vector<int> path;
@@ -99,7 +106,6 @@ float Graph::LengthNearestNeighbourPath(){
     index = 0;
     for (auto node : unvisitedNodes) {
       dist = GetLengthEdge(node, currentNode);
-      std::cout << dist << std::endl;
       if(dist < minDist){
         minDist = dist;
         minIndex = index;
@@ -110,10 +116,7 @@ float Graph::LengthNearestNeighbourPath(){
     path.push_back(currentNode);
     unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
     totalDist += minDist;
-    std::cout << "Tot dist: " <<totalDist << " Going to: " << currentNode << std::endl;
   }
-  std::cout << "Nearest neighbour path:\n";
-  for(auto node : path) std::cout << node << " --> ";
   return totalDist;
 };
 
@@ -141,3 +144,6 @@ void Graph::PrintConnectedEdges(){
   }
 };
 
+void Graph::PrintPath(const std::vector<int> path){
+  for(auto node : path) std::cout << node << " --> ";
+};
