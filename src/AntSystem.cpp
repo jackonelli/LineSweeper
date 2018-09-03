@@ -3,121 +3,145 @@
 #include <numeric>
 #include <stdlib.h>
 #include <algorithm>
+#include <utility>
 
 AntSystem::AntSystem(const char * nodeFileName, const char * edgeFileName, const int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
-  : graph(nodeFileName, edgeFileName), numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
-  //InitPheromoneLevels();
-  graph.LengthNearestNeighbourPath();
+  : graph_(nodeFileName, edgeFileName), numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
+  graph_.GraphFromFile();
+};
+
+AntSystem::AntSystem(const int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
+  :numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
 };
 
 AntSystem::~AntSystem(){
 };
 
 void AntSystem::InitPheromoneLevels(){
-  int numberOfNodes = graph.GetNumberOfNodes();
-  float nearestNeighbourDistance = graph.LengthNearestNeighbourPath();
-  pheromoneLevel_ = std::vector<float>(numberOfNodes * numberOfNodes, nearestNeighbourDistance);
+  const int numberOfNodes = graph_.GetNumberOfNodes();
+  const float lengthNearestNeighbourPath = graph_.LengthNearestNeighbourPath();
+  float initialPheromoneLevel = -1;
+  if(lengthNearestNeighbourPath > 0){
+    initialPheromoneLevel = numberOfAnts_ / (lengthNearestNeighbourPath);
+  } else {
+    throw "Non-positive path length";
+  }
+  pheromoneLevel_ = std::vector<float>(numberOfNodes * numberOfNodes, initialPheromoneLevel);
 };
 
-void AntSystem::ComputeDeltaPheromoneLevels(std::vector<float> * deltaPheromone, const std::vector<int> * path, const float pathLength){
-  const int n = path->size();
-  int pos;
-  for(int i = 0; i < (n - 1); i++ ){
-    if (pathLength > 0){
-      pos = (*path)[i+1] ;//* graph.GetNumberOfNodes() + (*path)[i];
-      std::cout << pos << std::endl;
-      //(*deltaPheromone)[pos] += 1 / pathLength;
-    } else {
-      std::cout << "Incorrect path, pheromones not updated" << std::endl;
+void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, const std::vector<int> * path){
+  const float pathLength = graph_.GetPathLength(*path);
+  const int numberOfNodesInPath = path->size();
+  const int numberOfNodes = graph_.GetNumberOfNodes();
+  if (pathLength > 0 && numberOfNodesInPath >= numberOfNodes){
+    int currentNode, nextNode;
+
+    for(int iNode = 0; iNode < numberOfNodesInPath - 1; iNode++ ){
+        currentNode = (*path)[iNode] ;//* graph_.GetNumberOfNodes() + (*path)[i];
+        nextNode = (*path)[iNode+1] ;//* graph_.GetNumberOfNodes() + (*path)[i];
+        if(graph_.ValidateEdge(currentNode, nextNode)){
+          (*deltaPheromone)[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
+        } else {
+          throw "Invalid node";
+        };
     }
+  } else {
+    throw "Incorrect path";
   }
 }
 
+void AntSystem::UpdatePheromoneLevels(std::vector<float> * deltaPheromone){
+  std::transform (pheromoneLevel_.begin(), pheromoneLevel_.end(), (*deltaPheromone).begin(), pheromoneLevel_.begin(), std::plus<float>());
+}
+
 float AntSystem::GetPheromoneLevel(const int jNode, const int iNode) {
-  if (graph.ValidateEdge(jNode, iNode)){
-    int numberOfNodes = graph.GetNumberOfNodes();
-    if(jNode != iNode) {
+  if (graph_.ValidateEdge(jNode, iNode)){
+    int numberOfNodes = graph_.GetNumberOfNodes();
       return pheromoneLevel_[iNode*numberOfNodes + jNode];
-    } else {
-      std::cout << "Same node" << std::endl;
-      return 0;
-    }
   } else {
-    std::cout << "Index out of range" << std::endl;
-    return -1;
+    throw "Invalid node";
   }
 };
 
-std::vector<int> AntSystem::GeneratePath(const int ant, const std::vector<float> * pheromoneLevel_){
+std::vector<int> AntSystem::GeneratePath(){
   int currentNode, nextNode;
-  const int numberOfNodes = graph.GetNumberOfNodes();
-  std::vector<int> path(numberOfNodes);
-  std::vector<int> unvisitedNodes(numberOfNodes);
-  std::iota(unvisitedNodes.begin(), unvisitedNodes.end(), 0);
+  const int numberOfNodes = graph_.GetNumberOfNodes();
+  std::vector<int> path;
+  path.reserve(numberOfNodes);
+  //std::vector<int> unvisitedNodes(numberOfNodes);
+  //std::iota(unvisitedNodes.begin(), unvisitedNodes.end(), 0);
+  std::unordered_set<int> unvisitedNodes = ResetUnvisitedNodes();
   const int startingNode = rand() % numberOfNodes;
   path.push_back(startingNode);
-  unvisitedNodes.erase(unvisitedNodes.begin() + startingNode);
+  unvisitedNodes.erase(startingNode);
   currentNode = startingNode;
   for(int i=0; i < numberOfNodes - 1; i++) {
-    std::cout << "Unvisited nodes" << std::endl;
-    for (auto node : unvisitedNodes) std::cout << node << ", ";
-    std::cout << std::endl;
     nextNode = GetNextNode(currentNode, unvisitedNodes);
-    std::cout << currentNode << " --> " << nextNode << std::endl;
     path.push_back(nextNode);
-    unvisitedNodes.erase(unvisitedNodes.begin() + currentNode);
+    unvisitedNodes.erase(nextNode);
     currentNode = nextNode;
   }
   return path;
 };
 
-int AntSystem::GetNextNode(const int currentNode, const std::vector<int> unvisitedNodes) {
-  std::vector<float> transitionProbability(unvisitedNodes.size());
+std::unordered_set<int> AntSystem::ResetUnvisitedNodes(){
+  std::unordered_set<int> unvisitedNodes;
+  std::vector<int> nodeIds = graph_.GetNodeIds();
+  for(auto id : nodeIds){
+    unvisitedNodes.insert(id);
+  }
+  return unvisitedNodes;
+}
+
+int AntSystem::GetNextNode(const int currentNode, const std::unordered_set<int> unvisitedNodes){
+  std::vector<std::pair<int, float>> transitionProbability;
+  transitionProbability.reserve(unvisitedNodes.size());
   float totalProbability = 0;
   for(auto node : unvisitedNodes) { // Sort while creating
-    float tmpProbability = GetPheromoneLevel(currentNode, node) * alpha_ * graph.GetVisibility(currentNode, node) * beta_;
-    transitionProbability[node] = tmpProbability;
-    std::cout << "Node 1: " << currentNode << " Node 2: " << node << " Prob: " << tmpProbability << std::endl;
+    float tmpProbability = GetPheromoneLevel(currentNode, node) * alpha_ * graph_.GetVisibility(currentNode, node) * beta_;
+    transitionProbability.push_back(std::make_pair(node,tmpProbability));
     totalProbability += tmpProbability;
   }
-  for (auto &prob : transitionProbability) prob /= totalProbability;
-  std::sort(transitionProbability.rbegin(), transitionProbability.rend()); // Sort descending
-
-  for (auto prob : transitionProbability) std::cout << prob << ", " << std::endl;
+  for (auto &probPair : transitionProbability) probPair.second /= totalProbability;
+  std::sort(transitionProbability.begin(), transitionProbability.end(), PairSortDescValue); // Sort descending
 
   // Roulette wheel:
   const float r = (float) rand() / (float) RAND_MAX; // U(0,1)
-  //std::cout << "Rand: " << r << std::endl;
-  int nextNode= 0;
-  float cumulated_probability = transitionProbability[nextNode];
-  while(cumulated_probability < r && nextNode < unvisitedNodes.size()){
-    nextNode++;
+  int index= 0;
+  float cumulated_probability = transitionProbability[index].second;
+  while(cumulated_probability < r && index < unvisitedNodes.size()){
+    index++;
     //std::cout << "cum prob: " << cumulated_probability << std::endl;
-    cumulated_probability += transitionProbability[nextNode];
+    cumulated_probability += transitionProbability[index].second;
   }
-  return nextNode;
+  return transitionProbability[index].first;
 }
 
+int AntSystem::GetNumberOfNodes(){
+  return graph_.GetNumberOfNodes();
+}
 void AntSystem::Run(){
   int iIteration = 0;
   float minPathLength = 1e9;
-  std::vector<int> shortestPath;
   std::vector<float> deltaPheromone(pheromoneLevel_.size(), 0);
-  while(minPathLength > targetPathLength_){
-    iIteration++;
-    std::iota(deltaPheromone.begin(), deltaPheromone.end(), 0);
-
+  while(minPathLength > targetPathLength_ && iIteration < 10000){ iIteration++;
+    std::fill(deltaPheromone.begin(), deltaPheromone.end(), 0);
     for(int kAnt = 0; kAnt < numberOfAnts_; kAnt++){
-      std::vector<int> path = GeneratePath(kAnt, &pheromoneLevel_);
-      std::cout << "after gen path" << std::endl;
-      float pathLength = graph.GetPathLength(path);
-      ComputeDeltaPheromoneLevels(&deltaPheromone, &path, pathLength);
-
+      std::vector<int> path = GeneratePath();
+      float pathLength = graph_.GetPathLength(path);
+      UpdateDeltaPheromoneLevels(&deltaPheromone, &path);
       if(pathLength < minPathLength){
         minPathLength = pathLength;
-        shortestPath = path;
-        std::cout << "Iteration " << iIteration << ", path length = " << minPathLength << std::endl;
+        shortestPath_ = path;
       }
+      UpdatePheromoneLevels(&deltaPheromone);
     }
+    std::cout << "Iteration " << iIteration << ", path length = " << minPathLength << std::endl;
   }
+  graph_.PrintPath(shortestPath_);
 };
+
+bool AntSystem::PairSortDescValue(const std::pair<int,float> &a, const std::pair<int,float> &b)
+{
+       return (a.second > b.second);
+}

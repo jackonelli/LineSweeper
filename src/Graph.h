@@ -12,6 +12,7 @@ class Graph
     bool GraphFromFile();
     void AddNode(float x, float y);
     int GetNumberOfNodes();
+    std::vector<int> GetNodeIds();
     float GetLengthEdge(const int node1, const int node2);
     float GetVisibility(const int node1, const int node2);
     bool ValidateEdge(const int node1, const int node2);

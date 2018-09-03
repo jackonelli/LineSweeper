@@ -23,13 +23,13 @@ To build the code:
  - Use `npm run build` to minify the code with [Uglify](https://github.com/mishoo/UglifyJS). The minified file `sigma.min.js` will then be accessible in the `build/` folder.
 
 ## TODO
- - Better datastructure for paths
+ - ~~Better datastructure for paths~~
  - txt to json for data
  - ~~Unit tests~~
  - ~~Cmake~~
  - ~~javascript graph~~
  - Wasm check
- - Original problem verify
+ - ~~Original problem verify~~
  - Unsigned
 
 ## RESOURCES

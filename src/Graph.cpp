@@ -51,18 +51,16 @@ void Graph::AddNode(float x, float y){
   /* TODO: Add duplicate node check.
    *
    */
-  bool novelNode = true;
+  bool novelCoord = true;
   for(auto &kv : nodes_){
     if(x == kv.second.x && y == kv.second.y){
-      novelNode = false;
+      novelCoord = false;
       std::cout << "Node already exists, node: " << kv.first << std::endl;
     }
   }
-  bool idInNodes = nodes_.count(numberOfNodes_) > 0;
-  if(novelNode && !idInNodes){
-    Node node;
-    node.x = x;
-    node.y = y;
+  bool nodeExist = nodes_.count(numberOfNodes_) > 0;
+  if(novelCoord && !nodeExist){
+    Node node = {x, y};
     nodes_[numberOfNodes_] = node;
     numberOfNodes_++;
   }
@@ -71,6 +69,15 @@ void Graph::AddNode(float x, float y){
 int Graph::GetNumberOfNodes(){
   return numberOfNodes_;
 };
+
+std::vector<int> Graph::GetNodeIds(){
+  std::vector<int> ids;
+  ids.reserve(nodes_.size());
+  for(auto &kv : nodes_ ){
+    ids.push_back(kv.first);
+  }
+  return ids;
+}
 
 float Graph::GetLengthEdge(const int node1_id, const int node2_id){
   if (ValidateEdge(node1_id, node2_id)){
@@ -102,37 +109,40 @@ bool Graph::ValidateEdge(const int node1, const int node2) {
 };
 
 float Graph::LengthNearestNeighbourPath(){
+  if(numberOfNodes_ == 0){
+    throw "Empty graph";
+  }
   const int startingNode = rand() % numberOfNodes_;
   return LengthNearestNeighbourPath(startingNode);
 };
 
 float Graph::LengthNearestNeighbourPath(const int startingNode){
+  if(nodes_.count(startingNode) == 0){
+    throw "Node not in graph";
+  }
   float dist, minDist;
   float totalDist = 0;
-  int index, minIndex;
+  int minId;
   int currentNode;
-  std::vector<int> unvisitedNodes(numberOfNodes_);
-  std::vector<int> path;
 
+  std::vector<int> path;
   path.push_back(startingNode);
-  std::iota(unvisitedNodes.begin(), unvisitedNodes.end(), 0);
   currentNode = startingNode;
-  unvisitedNodes.erase(unvisitedNodes.begin() + startingNode);
+  std::unordered_map<int, Node> unvisitedNodes(nodes_);
+  unvisitedNodes.erase(startingNode);
 
   for(int i = 0; i < numberOfNodes_-1; i++){
     minDist = 100;
-    index = 0;
     for (auto node : unvisitedNodes) {
-      dist = GetLengthEdge(node, currentNode);
+      dist = GetLengthEdge(node.first, currentNode);
       if(dist < minDist){
         minDist = dist;
-        minIndex = index;
+        minId = node.first;
       }
-      index++;
     }
-    currentNode = unvisitedNodes[minIndex];
+    currentNode = minId;
     path.push_back(currentNode);
-    unvisitedNodes.erase(unvisitedNodes.begin() + minIndex);
+    unvisitedNodes.erase(minId);
     totalDist += minDist;
   }
   return totalDist;
@@ -165,5 +175,7 @@ void Graph::PrintConnectedEdges(){
 };
 
 void Graph::PrintPath(const std::vector<int> path){
+  std::cout << "Path" << std::endl;
   for(auto node : path) std::cout << node << " --> ";
+  std::cout << std::endl;
 };

@@ -13,7 +13,7 @@ int main(){
   const float BETA = 1;
   const float EVAPORATION = 0.1;
   AntSystem * antSystem = new AntSystem(NODE_FILENAME, EDGE_FILENAME, NUMBER_OF_ANTS, TARGET_PATH_LENGTH, ALPHA, BETA, EVAPORATION);
-  //antSystem->Run();
+  antSystem->Run();
   //float aba = antSystem->LengthNearestNeighbourPath();
   //std::cout << aba << std::endl;
   //float aba = graph->GetLengthEdge(7, 1);
