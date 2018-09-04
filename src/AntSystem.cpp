@@ -17,6 +17,22 @@ AntSystem::AntSystem(const unsigned int numberOfAnts, const float targetPathLeng
 AntSystem::~AntSystem(){
 };
 
+unsigned int AntSystem::GetNumberOfNodes(){
+  return graph_.GetNumberOfNodes();
+}
+
+unsigned int AntSystem::GetTotalIterations(){
+  return totalIterations_;
+}
+
+float AntSystem::GetMinPathLength(){
+  return minPathLength_;
+}
+
+std::vector<unsigned int> AntSystem::GetShortestPath(){
+  return shortestPath_;
+}
+
 void AntSystem::InitPheromoneLevels(){
   const unsigned int numberOfNodes = graph_.GetNumberOfNodes();
   const float lengthNearestNeighbourPath = graph_.LengthNearestNeighbourPath();
@@ -68,8 +84,6 @@ std::vector<unsigned int> AntSystem::GeneratePath(){
   const unsigned int numberOfNodes = graph_.GetNumberOfNodes();
   std::vector<unsigned int> path;
   path.reserve(numberOfNodes);
-  //std::vector<unsigned int> unvisitedNodes(numberOfNodes);
-  //std::iota(unvisitedNodes.begin(), unvisitedNodes.end(), 0);
   std::unordered_set<unsigned int> unvisitedNodes = ResetUnvisitedNodes();
   const unsigned int startingNode = rand() % numberOfNodes;
   path.push_back(startingNode);
@@ -78,8 +92,8 @@ std::vector<unsigned int> AntSystem::GeneratePath(){
   for(unsigned int i=0; i < numberOfNodes - 1; i++) {
     nextNode = GetNextNode(currentNode, unvisitedNodes);
     path.push_back(nextNode);
-    unvisitedNodes.erase(nextNode);
     currentNode = nextNode;
+    unvisitedNodes.erase(currentNode);
   }
   return path;
 };
@@ -96,46 +110,33 @@ std::unordered_set<unsigned int> AntSystem::ResetUnvisitedNodes(){
 unsigned int AntSystem::GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int> unvisitedNodes){
   std::vector<std::pair<unsigned int, float>> transitionProbability;
   transitionProbability.reserve(unvisitedNodes.size());
+  CalculateTransitionProbability(&transitionProbability, &unvisitedNodes, currentNode);
+  return RouletteWheelSelection(&transitionProbability);
+}
+
+void AntSystem::CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>> *transitionProbability, const std::unordered_set<unsigned int> *unvisitedNodes, const unsigned int currentNode){
   float totalProbability = 0;
-  for(auto node : unvisitedNodes) { // Sort while creating
+  for(auto node : *unvisitedNodes) { // Sort while creating
     float tmpProbability = GetPheromoneLevel(currentNode, node) * alpha_ * graph_.GetVisibility(currentNode, node) * beta_;
-    transitionProbability.push_back(std::make_pair(node,tmpProbability));
+    transitionProbability->push_back(std::make_pair(node,tmpProbability));
     totalProbability += tmpProbability;
   }
-  for (auto &probPair : transitionProbability) probPair.second /= totalProbability;
-  std::sort(transitionProbability.begin(), transitionProbability.end(), PairSortDescValue); // Sort descending
+  for (auto &probPair : *transitionProbability) probPair.second /= totalProbability;
+  std::sort(transitionProbability->begin(), transitionProbability->end(), PairSortDescValue); // Sort descending
+}
 
-  // Roulette wheel:
+unsigned int AntSystem::RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>> *transitionProbability){
   const float r = (float) rand() / (float) RAND_MAX; // U(0,1)
   unsigned int index= 0;
-  float cumulativeProbability = transitionProbability[index].second;
-  while(cumulativeProbability < r && index < unvisitedNodes.size()){
+  std::pair<unsigned int, float> probPair = (*transitionProbability)[index];
+  float cumulativeProbability = probPair.second;
+  while(cumulativeProbability < r && index < transitionProbability->size()){
     index++;
-    cumulativeProbability += transitionProbability[index].second;
+    probPair = (*transitionProbability)[index];
+    cumulativeProbability += probPair.second;
   }
-  return transitionProbability[index].first;
+  return probPair.first;
 }
-
-unsigned int AntSystem::GetNumberOfNodes(){
-  return graph_.GetNumberOfNodes();
-}
-
-void AntSystem::PrintPath(const std::vector<unsigned int> path){
-  graph_.PrintPath(path);
-}
-
-unsigned int AntSystem::GetTotalIterations(){
-  return totalIterations_;
-}
-
-float AntSystem::GetMinPathLength(){
-  return minPathLength_;
-}
-
-std::vector<unsigned int> AntSystem::GetShortestPath(){
-  return shortestPath_;
-}
-
 void AntSystem::ImprovePath(const unsigned int maxNumberOfIterations){
   unsigned int localIteration = 0;
   const float previousPathLength = minPathLength_;
@@ -156,6 +157,10 @@ void AntSystem::ImprovePath(const unsigned int maxNumberOfIterations){
   }
   totalIterations_ += localIteration;
 };
+
+void AntSystem::PrintPath(const std::vector<unsigned int> *path){
+  graph_.PrintPath(path);
+}
 
 bool AntSystem::PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b)
 {

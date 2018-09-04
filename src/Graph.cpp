@@ -174,8 +174,8 @@ void Graph::PrintConnectedEdges(){
   }
 };
 
-void Graph::PrintPath(const std::vector<unsigned int> path){
+void Graph::PrintPath(const std::vector<unsigned int> *path){
   std::cout << "Path" << std::endl;
-  for(auto node : path) std::cout << node << " --> ";
+  for(auto node : *path) std::cout << node << " --> ";
   std::cout << std::endl;
 };

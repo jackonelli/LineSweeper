@@ -20,8 +20,10 @@ class AntSystem
     std::vector<unsigned int> GeneratePath();
     std::unordered_set<unsigned int> ResetUnvisitedNodes();
     unsigned int GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int> unvisitedNodes);
+    void CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>> *transitionProbability, const std::unordered_set<unsigned int> *unvisitedNodes, const unsigned int currentNode);
+    unsigned int RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>> *transitionProbability);
     void ImprovePath(const unsigned int maxNumberOfIterations);
-    void PrintPath(const std::vector<unsigned int> path);
+    void PrintPath(const std::vector<unsigned int> *path);
 
   private:
     static bool PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b);

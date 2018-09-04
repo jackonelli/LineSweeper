@@ -21,7 +21,7 @@ class Graph
     float GetPathLength(const std::vector<unsigned int> path);
     void PrintConnectedEdges();
     void PrintNodes();
-    void PrintPath(const std::vector<unsigned int> path);
+    void PrintPath(const std::vector<unsigned int> *path);
 
   private:
     typedef struct {

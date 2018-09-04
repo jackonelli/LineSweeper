@@ -14,9 +14,12 @@ int main(){
   const float EVAPORATION = 0.1;
   AntSystem antSystem(NODE_FILENAME, EDGE_FILENAME, NUMBER_OF_ANTS, TARGET_PATH_LENGTH, ALPHA, BETA, EVAPORATION);
   antSystem.InitPheromoneLevels();
+  std::vector<unsigned int> shortestPath;
+  shortestPath.reserve(antSystem.GetNumberOfNodes());
   while(antSystem.GetTotalIterations() < 10000){
     std::cout << "Iteration " << antSystem.GetTotalIterations() << ", path length = " << antSystem.GetMinPathLength() << std::endl;
-    antSystem.PrintPath(antSystem.GetShortestPath());
+    shortestPath = antSystem.GetShortestPath();
+    antSystem.PrintPath(&shortestPath);
     antSystem.ImprovePath(100);
   }
 }
