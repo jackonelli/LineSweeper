@@ -4,9 +4,9 @@
 
 BOOST_AUTO_TEST_SUITE( AntSystemSuite )
 // TODO: Better mock test class
-const char * NODE_FILENAME = "../graph/wahde.txt";
-const char * EDGE_FILENAME = "../graph/edges.txt";
-const int NUMBER_OF_ANTS = 3;
+const char * NODE_FILENAME = "../graph/nodes_test.txt";
+const char * EDGE_FILENAME = "../graph/edges_test.txt";
+const unsigned int NUMBER_OF_ANTS = 3;
 const float TARGET_PATH_LENGTH = 2;
 const float ALPHA = 1;
 const float BETA = 1;
@@ -16,9 +16,9 @@ AntSystem antSystem(NODE_FILENAME, EDGE_FILENAME, NUMBER_OF_ANTS, TARGET_PATH_LE
 BOOST_AUTO_TEST_CASE( InitPheromoneLevels )
 {
   antSystem.InitPheromoneLevels();
-  int numberOfNodes = antSystem.GetNumberOfNodes();
-  for(int i = 0; i< numberOfNodes; i++){
-    for(int j = i+1; j< numberOfNodes; j++){
+  unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
+  for(unsigned int i = 0; i< numberOfNodes; i++){
+    for(unsigned int j = i+1; j< numberOfNodes; j++){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 1);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 1);
@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_CASE( InitPheromoneLevels )
 
 BOOST_AUTO_TEST_CASE( UpdateDeltaPheromoneLevels )
 {
-  std::vector<int> path = {0, 1, 2, 3};
-  int numberOfNodes = antSystem.GetNumberOfNodes();
+  std::vector<unsigned int> path = {0, 1, 2, 3};
+  unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
   std::vector<float> deltaPheromone(numberOfNodes * numberOfNodes , 0);
   antSystem.UpdateDeltaPheromoneLevels(&deltaPheromone, &path);
   BOOST_CHECK_EQUAL(deltaPheromone[1*numberOfNodes + 2], 1.f/3);
@@ -42,20 +42,20 @@ BOOST_AUTO_TEST_CASE( UpdateDeltaPheromoneLevels )
 BOOST_AUTO_TEST_CASE( UpdatePheromoneLevels )
 {
   antSystem.InitPheromoneLevels();
-  int numberOfNodes = antSystem.GetNumberOfNodes();
+  unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
   std::vector<float> deltaPheromone(numberOfNodes * numberOfNodes , 1);
   antSystem.UpdatePheromoneLevels(&deltaPheromone);
 
-  for(int i = 0; i< numberOfNodes; i++){
-    for(int j = i+1; j< numberOfNodes; j++){
+  for(unsigned int i = 0; i< numberOfNodes; i++){
+    for(unsigned int j = i+1; j< numberOfNodes; j++){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 2);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 2);
     }
   }
   antSystem.InitPheromoneLevels();
-  for(int i = 0; i< numberOfNodes; i++){
-    for(int j = i+1; j< numberOfNodes; j++){
+  for(unsigned int i = 0; i< numberOfNodes; i++){
+    for(unsigned int j = i+1; j< numberOfNodes; j++){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 1);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 1);
@@ -66,9 +66,9 @@ BOOST_AUTO_TEST_CASE( UpdatePheromoneLevels )
 BOOST_AUTO_TEST_CASE( ResetPheromoneLevel )
 {
   antSystem.InitPheromoneLevels();
-  int numberOfNodes = antSystem.GetNumberOfNodes();
-  for(int i = 0; i< numberOfNodes; i++){
-    for(int j = i+1; j< numberOfNodes; j++){
+  unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
+  for(unsigned int i = 0; i< numberOfNodes; i++){
+    for(unsigned int j = i+1; j< numberOfNodes; j++){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 1);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 1);
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE( GeneratePath )
 
 BOOST_AUTO_TEST_CASE( Run )
 {
-  antSystem.Run();
+  antSystem.ImprovePath(5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

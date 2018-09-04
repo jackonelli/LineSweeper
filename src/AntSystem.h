@@ -6,28 +6,34 @@
 class AntSystem
 {
   public:
-    AntSystem(const char * nodeFileName, const char * edgeFileName, const int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
-    AntSystem(const int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
+    AntSystem(const char * nodeFileName, const char * edgeFileName, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
+    AntSystem(const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
     ~AntSystem();
-    int GetNumberOfNodes();
+    unsigned int GetNumberOfNodes();
+    unsigned int GetTotalIterations();
+    float GetMinPathLength();
+    std::vector<unsigned int> GetShortestPath();
     void InitPheromoneLevels();
-    void UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromoneLevel, const std::vector<int> * path);
-    void UpdatePheromoneLevels(std::vector<float> * deltaPheromoneLevel);
-    float GetPheromoneLevel(const int node1, const int node2);
-    std::vector<int> GeneratePath();
-    std::unordered_set<int> ResetUnvisitedNodes();
-    int GetNextNode(const int currentNode, const std::unordered_set<int> unvisitedNodes);
-    void Run();
+    void UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromoneLevel, const std::vector<unsigned int> * path);
+    void UpdatePheromoneLevels(const std::vector<float> * deltaPheromoneLevel);
+    float GetPheromoneLevel(const unsigned int node1, const unsigned int node2);
+    std::vector<unsigned int> GeneratePath();
+    std::unordered_set<unsigned int> ResetUnvisitedNodes();
+    unsigned int GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int> unvisitedNodes);
+    void ImprovePath(const unsigned int maxNumberOfIterations);
+    void PrintPath(const std::vector<unsigned int> path);
 
   private:
-    static bool PairSortDescValue(const std::pair<int,float> &a, const std::pair<int,float> &b);
+    static bool PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b);
     Graph graph_;
-    const int numberOfAnts_;
+    const unsigned int numberOfAnts_;
     const float targetPathLength_;
     const float alpha_;
     const float beta_;
     const float evaporation_;
     std::vector<float> pheromoneLevel_;
-    std::vector<int> shortestPath_;
+    std::vector<unsigned int> shortestPath_;
+    unsigned int totalIterations_ = 0;
+    float minPathLength_ = 1e9;
 };
 #endif

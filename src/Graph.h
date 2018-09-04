@@ -11,17 +11,17 @@ class Graph
     ~Graph();
     bool GraphFromFile();
     void AddNode(float x, float y);
-    int GetNumberOfNodes();
-    std::vector<int> GetNodeIds();
-    float GetLengthEdge(const int node1, const int node2);
-    float GetVisibility(const int node1, const int node2);
-    bool ValidateEdge(const int node1, const int node2);
+    unsigned int GetNumberOfNodes();
+    std::vector<unsigned int> GetNodeIds();
+    float GetLengthEdge(const unsigned int node1, const unsigned int node2);
+    float GetVisibility(const unsigned int node1, const unsigned int node2);
+    bool ValidateEdge(const unsigned int node1, const unsigned int node2);
     float LengthNearestNeighbourPath();
-    float LengthNearestNeighbourPath(const int startingNode);
-    float GetPathLength(const std::vector<int> path);
+    float LengthNearestNeighbourPath(const unsigned int startingNode);
+    float GetPathLength(const std::vector<unsigned int> path);
     void PrintConnectedEdges();
     void PrintNodes();
-    void PrintPath(const std::vector<int> path);
+    void PrintPath(const std::vector<unsigned int> path);
 
   private:
     typedef struct {
@@ -29,8 +29,8 @@ class Graph
       float y;
     } Node;
     const char * nodeFileName_, * edgeFileName_;
-    int numberOfNodes_;
-    std::unordered_map <int, Node> nodes_;
+    unsigned int numberOfNodes_;
+    std::unordered_map <unsigned int, Node> nodes_;
     std::vector<bool> edgesConnected_;
 
 };
