@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <utility>
+#ifdef __EMSCRIPTEN__
+#include <emscripten/bind.h>
+#endif
 
-AntSystem::AntSystem(const char * nodeFileName, const char * edgeFileName, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
+AntSystem::AntSystem(std::string nodeFileName, std::string edgeFileName, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
   : graph_(nodeFileName, edgeFileName), numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
   graph_.GraphFromFile();
 };
@@ -55,8 +58,8 @@ void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, 
     unsigned int currentNode, nextNode;
 
     for(unsigned int iNode = 0; iNode < numberOfNodesInPath - 1; iNode++ ){
-        currentNode = (*path)[iNode] ;//* graph_.GetNumberOfNodes() + (*path)[i];
-        nextNode = (*path)[iNode+1] ;//* graph_.GetNumberOfNodes() + (*path)[i];
+        currentNode = (*path)[iNode] ;
+        nextNode = (*path)[iNode+1] ;
         if(graph_.ValidateEdge(currentNode, nextNode)){
           (*deltaPheromone)[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
         } else {
@@ -174,3 +177,18 @@ bool AntSystem::PairSortDescValue(const std::pair<unsigned int,float> &a, const 
 {
        return (a.second > b.second);
 }
+
+#ifdef __EMSCRIPTEN__
+namespace emscripten{
+
+  EMSCRIPTEN_BINDINGS(antSystemEntry) {
+    class_<AntSystem>("AntSystem")
+      //.constructor<std::string*, std::string, const unsigned int, const float, const float, const float, const float>()
+      .constructor<const unsigned int, const float, const float, const float, const float>()
+      .function("InitPheromoneLevels", &AntSystem::InitPheromoneLevels)
+      //.property("x", &AntSystem::getX, &AntSystem::setX)
+      //.class_function("getStringFromInstance", &AntSystem::getStringFromInstance)
+      ;
+  }
+} // end namespace emscripten
+#endif

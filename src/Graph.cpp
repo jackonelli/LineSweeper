@@ -10,7 +10,7 @@ Graph::Graph()
   numberOfNodes_ = 0;
 }
 
-Graph::Graph(const char * nodeFileName, const char * edgeFileName) : nodeFileName_(nodeFileName), edgeFileName_(edgeFileName)
+Graph::Graph(std::string nodeFileName, std::string edgeFileName) : nodeFileName_(nodeFileName), edgeFileName_(edgeFileName)
 {
   numberOfNodes_ = 0;
 }
@@ -18,7 +18,7 @@ Graph::~Graph(){
 
 };
 bool Graph::GraphFromFile(){
-  std::ifstream nodeFile(nodeFileName_);
+  std::ifstream nodeFile(nodeFileName_.c_str());
   if(nodeFile.is_open()){
     float x,y;
     while ( nodeFile >>  x >> y ){
@@ -31,7 +31,7 @@ bool Graph::GraphFromFile(){
     return false;
   }
   edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
-  std::ifstream edgeFile(edgeFileName_);
+  std::ifstream edgeFile(edgeFileName_.c_str());
   if(edgeFile.is_open()){
     unsigned int node2, node1;
     while ( edgeFile >> node2 >> node1 ){

@@ -1,4 +1,5 @@
 build/*
 web/ext/*
-web/img/store/*
+web/img/store/
+web/script/*
 tags

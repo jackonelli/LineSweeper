@@ -1,12 +1,13 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 #include <vector>
+#include <string>
 #include <unordered_map>
 
 class Graph
 {
   public:
-    Graph(const char * nodeFileName, const char * edgeFileName);
+    Graph(std::string nodeFileName, std::string edgeFileName);
     Graph();
     ~Graph();
     bool GraphFromFile();
@@ -28,7 +29,7 @@ class Graph
       float x;
       float y;
     } Node;
-    const char * nodeFileName_, * edgeFileName_;
+    std::string nodeFileName_, edgeFileName_;
     unsigned int numberOfNodes_;
     std::unordered_map <unsigned int, Node> nodes_;
     std::vector<bool> edgesConnected_;

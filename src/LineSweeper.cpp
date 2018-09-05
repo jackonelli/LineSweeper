@@ -5,8 +5,8 @@
 using namespace std;
 int main(){
   srand(time(NULL)); // Does this even work?
-  const char * NODE_FILENAME = "../graph/nodes.txt";
-  const char * EDGE_FILENAME = "../graph/edges.txt";
+  std::string NODE_FILENAME = "../graph/nodes.txt";
+  std::string EDGE_FILENAME = "../graph/edges.txt";
   const int NUMBER_OF_ANTS = 5;
   const float TARGET_PATH_LENGTH = 10;
   const float ALPHA = 1;
