@@ -40,7 +40,9 @@ void AntSystem::InitPheromoneLevels(){
   if(lengthNearestNeighbourPath > 0){
     initialPheromoneLevel = numberOfAnts_ / (lengthNearestNeighbourPath);
   } else {
-    throw "Non-positive path length";
+    const std::string s = "Node not in graph";
+    std::cout << s << std::endl;
+    throw s;
   }
   pheromoneLevel_ = std::vector<float>(numberOfNodes * numberOfNodes, initialPheromoneLevel);
 };
@@ -58,11 +60,15 @@ void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, 
         if(graph_.ValidateEdge(currentNode, nextNode)){
           (*deltaPheromone)[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
         } else {
-          throw "Invalid node";
+          const std::string s = "Invalid node";
+          std::cout << s << std::endl;
+          throw s;
         };
     }
   } else {
-    throw "Incorrect path";
+    const std::string s = "Incorrect path";
+    std::cout << s << std::endl;
+    throw s;
   }
 }
 
@@ -75,9 +81,11 @@ float AntSystem::GetPheromoneLevel(const unsigned int jNode, const unsigned int 
     unsigned int numberOfNodes = graph_.GetNumberOfNodes();
       return pheromoneLevel_[iNode*numberOfNodes + jNode];
   } else {
-    throw "Invalid node";
+    const std::string s = "Invalid node";
+    std::cout << s << std::endl;
+    throw s;
   }
-};
+}
 
 std::vector<unsigned int> AntSystem::GeneratePath(){
   unsigned int currentNode, nextNode;

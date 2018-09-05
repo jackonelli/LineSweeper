@@ -110,7 +110,9 @@ bool Graph::ValidateEdge(const unsigned int node1, const unsigned int node2) {
 
 float Graph::LengthNearestNeighbourPath(){
   if(numberOfNodes_ == 0){
-    throw "Empty graph";
+    const std::string s = "Empty graph";
+    std::cout << s << std::endl;
+    throw s;
   }
   const unsigned int startingNode = rand() % numberOfNodes_;
   return LengthNearestNeighbourPath(startingNode);
@@ -118,7 +120,9 @@ float Graph::LengthNearestNeighbourPath(){
 
 float Graph::LengthNearestNeighbourPath(const unsigned int startingNode){
   if(nodes_.count(startingNode) == 0){
-    throw "Node not in graph";
+    const std::string s = "Node not in graph";
+    std::cout << s << std::endl;
+    throw s;
   }
   float dist, minDist;
   float totalDist = 0;
