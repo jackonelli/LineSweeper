@@ -167,11 +167,12 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode){
   return totalDist;
 };
 
-float Graph::GetPathLength(const std::vector<unsigned int> path){
-  const unsigned int n = path.size();
+float Graph::GetPathLength(const std::vector<unsigned int> *path){
+  // TODO: switch to path pointer
+  const unsigned int n = path->size();
   float pathLength = 0;
   for( unsigned int i = 0; i < (n-1); i++){
-    pathLength += GetLengthEdge(path[i+1], path[i]);
+    pathLength += GetLengthEdge((*path)[i+1], (*path)[i]);
   }
   return pathLength;
 };
@@ -198,3 +199,11 @@ void Graph::PrintPath(const std::vector<unsigned int> *path){
   for(auto node : *path) std::cout << node << " --> ";
   std::cout << std::endl;
 };
+
+void Graph::StorePath(const std::vector<unsigned int> *path){
+  json graphData = fileIO::ReadJsonFile(graphFilePath_);
+  json jsonPath(*path);
+  graphData["storePath"] = jsonPath;
+  graphData["lengthStorePath"] = GetPathLength(path);
+  fileIO::WriteJsonToFile(&graphData, graphFilePath_);
+}

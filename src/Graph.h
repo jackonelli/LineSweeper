@@ -25,10 +25,11 @@ class Graph
     bool ValidateEdge(const unsigned int node1, const unsigned int node2);
     float LengthNearestNeighbourPath();
     float LengthNearestNeighbourPath(const unsigned int startingNode);
-    float GetPathLength(const std::vector<unsigned int> path);
+    float GetPathLength(const std::vector<unsigned int> *path);
     void PrintConnectedEdges();
     void PrintNodes();
     void PrintPath(const std::vector<unsigned int> *path);
+    void StorePath(const std::vector<unsigned int> *path);
 
   private:
     typedef struct {

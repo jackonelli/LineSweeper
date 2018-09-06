@@ -24,6 +24,7 @@ class AntSystem
     unsigned int RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>> *transitionProbability);
     void ImprovePath(const unsigned int maxNumberOfIterations);
     void PrintPath(const std::vector<unsigned int> *path);
+    void StoreBestPath();
 
   private:
     static bool PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b);

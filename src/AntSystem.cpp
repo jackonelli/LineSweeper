@@ -51,7 +51,7 @@ void AntSystem::InitPheromoneLevels(){
 };
 
 void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, const std::vector<unsigned int> * path){
-  const float pathLength = graph_.GetPathLength(*path);
+  const float pathLength = graph_.GetPathLength(path);
   const unsigned int numberOfNodesInPath = path->size();
   const unsigned int numberOfNodes = graph_.GetNumberOfNodes();
   if (pathLength > 0 && numberOfNodesInPath >= numberOfNodes){
@@ -159,7 +159,7 @@ void AntSystem::ImprovePath(const unsigned int maxNumberOfIterations){
     std::fill(deltaPheromone.begin(), deltaPheromone.end(), 0);
     for(unsigned int kAnt = 0; kAnt < numberOfAnts_; kAnt++){
       std::vector<unsigned int> path = GeneratePath();
-      float pathLength = graph_.GetPathLength(path);
+      float pathLength = graph_.GetPathLength(&path);
       UpdateDeltaPheromoneLevels(&deltaPheromone, &path);
       if(pathLength < minPathLength_){
         minPathLength_ = pathLength;
@@ -178,6 +178,10 @@ void AntSystem::PrintPath(const std::vector<unsigned int> *path){
 bool AntSystem::PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b)
 {
        return (a.second > b.second);
+}
+
+void AntSystem::StoreBestPath(){
+  graph_.StorePath(&shortestPath_);
 }
 
 #ifdef __EMSCRIPTEN__

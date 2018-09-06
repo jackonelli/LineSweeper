@@ -5,7 +5,6 @@
 using namespace std;
 int main(){
   srand(time(NULL)); // Does this even work?
-  //std::string GRAPH_FILE_PATH = "../graph/nodes_test.json";
   std::string GRAPH_FILE_PATH = "../web/graph/graph.json";
   const int NUMBER_OF_ANTS = 5;
   const float TARGET_PATH_LENGTH = 10;
@@ -16,10 +15,11 @@ int main(){
   antSystem.InitPheromoneLevels();
   std::vector<unsigned int> shortestPath;
   shortestPath.reserve(antSystem.GetNumberOfNodes());
-  while(antSystem.GetTotalIterations() < 100000){
+  while(antSystem.GetTotalIterations() < 20){
     std::cout << "Iteration " << antSystem.GetTotalIterations() << ", path length = " << antSystem.GetMinPathLength() << std::endl;
     shortestPath = antSystem.GetShortestPath();
     antSystem.PrintPath(&shortestPath);
-    antSystem.ImprovePath(1000);
+    antSystem.ImprovePath(10);
   }
+  antSystem.StoreBestPath();
 }
