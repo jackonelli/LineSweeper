@@ -1,16 +1,22 @@
 #ifndef GRAPH_H
 #define GRAPH_H
+#include "json.hpp"
 #include <vector>
 #include <string>
 #include <unordered_map>
+using json = nlohmann::json;
 
 class Graph
 {
   public:
-    Graph(std::string nodeFileName, std::string edgeFileName);
+    Graph(std::string graphFilePath_);
     Graph();
     ~Graph();
-    bool GraphFromFile();
+    void GraphFromFile();
+    void GraphFromFile(const std::string graphFilePath);
+    void AddNodes(json * graphData);
+    void AddEdges(json *graphData);
+    void AddEdge(const unsigned int source, const unsigned int target);
     void AddNode(float x, float y);
     unsigned int GetNumberOfNodes();
     std::vector<unsigned int> GetNodeIds();
@@ -29,7 +35,7 @@ class Graph
       float x;
       float y;
     } Node;
-    std::string nodeFileName_, edgeFileName_;
+    std::string graphFilePath_;
     unsigned int numberOfNodes_;
     std::unordered_map <unsigned int, Node> nodes_;
     std::vector<bool> edgesConnected_;

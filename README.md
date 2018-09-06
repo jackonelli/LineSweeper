@@ -22,6 +22,9 @@ To build the code:
  - Use `npm install` to install sigma development dependencies.
  - Use `npm run build` to minify the code with [Uglify](https://github.com/mishoo/UglifyJS). The minified file `sigma.min.js` will then be accessible in the `build/` folder.
 
+### nlohmann/json
+JSON for C++. Header only at: https://github.com/nlohmann/json
+
 ## TODO
  - Common tools in sep file
  - ~~Better datastructure for paths~~
@@ -36,7 +39,6 @@ To build the code:
 ## RESOURCES
  - Boost Graph
  - Clp https://projects.coin-or.org/Clp
- - Handle json: https://github.com/nlohmann/json
 
 ## THEORY
 https://pubsonline.informs.org/doi/pdf/10.1287/ited.2015.0150

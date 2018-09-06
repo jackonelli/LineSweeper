@@ -5,14 +5,14 @@
 using namespace std;
 int main(){
   srand(time(NULL)); // Does this even work?
-  std::string NODE_FILENAME = "../graph/nodes.txt";
-  std::string EDGE_FILENAME = "../graph/edges.txt";
+  //std::string GRAPH_FILE_PATH = "../graph/nodes_test.json";
+  std::string GRAPH_FILE_PATH = "../web/graph/graph.json";
   const int NUMBER_OF_ANTS = 5;
   const float TARGET_PATH_LENGTH = 10;
   const float ALPHA = 1;
   const float BETA = 1;
   const float EVAPORATION = 0.1;
-  AntSystem antSystem(NODE_FILENAME, EDGE_FILENAME, NUMBER_OF_ANTS, TARGET_PATH_LENGTH, ALPHA, BETA, EVAPORATION);
+  AntSystem antSystem(GRAPH_FILE_PATH, NUMBER_OF_ANTS, TARGET_PATH_LENGTH, ALPHA, BETA, EVAPORATION);
   antSystem.InitPheromoneLevels();
   std::vector<unsigned int> shortestPath;
   shortestPath.reserve(antSystem.GetNumberOfNodes());

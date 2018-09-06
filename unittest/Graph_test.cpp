@@ -15,6 +15,13 @@ BOOST_AUTO_TEST_CASE( NumberOfNodes )
  BOOST_CHECK_EQUAL(graph.GetNumberOfNodes(), 1);
 }
 
+BOOST_AUTO_TEST_CASE( FileIO )
+{
+ Graph graph;
+ const std::string graphFilePath = "../web/graph/graph.json";
+ graph.GraphFromFile(graphFilePath);
+}
+
 BOOST_AUTO_TEST_CASE( ValidateEdge )
 {
  Graph graph;

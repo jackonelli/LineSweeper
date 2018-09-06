@@ -8,8 +8,8 @@
 #include <emscripten/bind.h>
 #endif
 
-AntSystem::AntSystem(std::string nodeFileName, std::string edgeFileName, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
-  : graph_(nodeFileName, edgeFileName), numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
+AntSystem::AntSystem(std::string graphFilePath, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation)
+  : graph_(graphFilePath), numberOfAnts_(numberOfAnts), targetPathLength_(targetPathLength), alpha_(alpha), beta_(beta), evaporation_(evaporation) {
   graph_.GraphFromFile();
 };
 
@@ -63,8 +63,9 @@ void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, 
         if(graph_.ValidateEdge(currentNode, nextNode)){
           (*deltaPheromone)[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
         } else {
-          const std::string s = "Invalid node";
+          const std::string s = "Invalid edge";
           std::cout << s << std::endl;
+          std::cout << currentNode << ", " << nextNode << std::endl;
           throw s;
         };
     }
@@ -84,8 +85,9 @@ float AntSystem::GetPheromoneLevel(const unsigned int jNode, const unsigned int 
     unsigned int numberOfNodes = graph_.GetNumberOfNodes();
       return pheromoneLevel_[iNode*numberOfNodes + jNode];
   } else {
-    const std::string s = "Invalid node";
+    const std::string s = "Invalid edge";
     std::cout << s << std::endl;
+    std::cout << iNode << ", " << jNode << std::endl;
     throw s;
   }
 }

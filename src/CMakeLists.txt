@@ -1,4 +1,4 @@
-add_library(Graph Graph.h Graph.cpp)
+add_library(Graph Graph.h Graph.cpp tools/fileIO.cpp)
 add_library(AntSystem AntSystem.h AntSystem.cpp)
 add_executable(linesweeper LineSweeper.cpp)
 target_link_libraries(linesweeper AntSystem Graph)

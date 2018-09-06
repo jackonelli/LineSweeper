@@ -6,7 +6,7 @@
 class AntSystem
 {
   public:
-    AntSystem(std::string nodeFileName, std::string edgeFileName, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
+    AntSystem(std::string graphFilePath, const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
     AntSystem(const unsigned int numberOfAnts, const float targetPathLength, const float alpha, const float beta, const float evaporation);
     ~AntSystem();
     unsigned int GetNumberOfNodes();

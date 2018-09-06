@@ -4,14 +4,13 @@
 
 BOOST_AUTO_TEST_SUITE( AntSystemSuite )
 // TODO: Better mock test class
-const char * NODE_FILENAME = "../graph/nodes_test.txt";
-const char * EDGE_FILENAME = "../graph/edges_test.txt";
+const char * GRAPH_FILE_PATH = "../graph/nodes_test.json";
 const unsigned int NUMBER_OF_ANTS = 3;
 const float TARGET_PATH_LENGTH = 2;
 const float ALPHA = 1;
 const float BETA = 1;
 const float EVAPORATION = 0.1;
-AntSystem antSystem(NODE_FILENAME, EDGE_FILENAME, NUMBER_OF_ANTS, TARGET_PATH_LENGTH, ALPHA, BETA, EVAPORATION);
+AntSystem antSystem(GRAPH_FILE_PATH, NUMBER_OF_ANTS, TARGET_PATH_LENGTH, ALPHA, BETA, EVAPORATION);
 
 BOOST_AUTO_TEST_CASE( InitPheromoneLevels )
 {

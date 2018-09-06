@@ -1,56 +1,50 @@
 #include "Graph.h"
+#include "tools/fileIO.cpp"
+#include "json.hpp"
 #include <fstream>
 #include <math.h>
 #include <stdlib.h>
 #include <iostream> // TODO: remove
 #include <numeric>
 
+using json = nlohmann::json;
+
 Graph::Graph()
 {
   numberOfNodes_ = 0;
 }
 
-Graph::Graph(std::string nodeFileName, std::string edgeFileName) : nodeFileName_(nodeFileName), edgeFileName_(edgeFileName)
+Graph::Graph(std::string graphFilePath) : graphFilePath_(graphFilePath)
 {
   numberOfNodes_ = 0;
 }
 Graph::~Graph(){
-
 };
-bool Graph::GraphFromFile(){
-  std::ifstream nodeFile(nodeFileName_.c_str());
-  if(nodeFile.is_open()){
-    float x,y;
-    while ( nodeFile >>  x >> y ){
-      AddNode(x, y);
+
+void Graph::GraphFromFile(){
+  GraphFromFile(graphFilePath_);
+}
+
+void Graph::GraphFromFile(const std::string graphFilePath){
+  json graphData = fileIO::ReadJsonFile(graphFilePath.c_str());
+  AddNodes(&graphData);
+  AddEdges(&graphData);
+}
+
+void Graph::AddNodes(json *graphData){
+  if (graphData->find("nodes") != graphData->end()) {
+    json nodes = (*graphData)["nodes"];
+    for (auto node : nodes){
+      if (node.find("x") != node.end() && node.find("y") != node.end()){
+        const float x = node["x"];
+        const float y = node["y"];
+        AddNode(x, y);
+      }
     }
-    nodeFile.close();
   }
-  else {
-    std::cout << "Could not open node file" << std::endl;
-    return false;
-  }
-  edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
-  std::ifstream edgeFile(edgeFileName_.c_str());
-  if(edgeFile.is_open()){
-    unsigned int node2, node1;
-    while ( edgeFile >> node2 >> node1 ){
-      edgesConnected_[node2*numberOfNodes_ + node1] = 1;
-      edgesConnected_[node1*numberOfNodes_ + node2] = 1; // EPA make symmetric
-    }
-    edgeFile.close();
-  }
-  else {
-    std::cout << "Could not open edge file" << std::endl;
-    return false;
-  }
-  return true;
 }
 
 void Graph::AddNode(float x, float y){
-  /* TODO: Add duplicate node check.
-   *
-   */
   bool novelCoord = true;
   for(auto &kv : nodes_){
     if(x == kv.second.x && y == kv.second.y){
@@ -64,7 +58,28 @@ void Graph::AddNode(float x, float y){
     nodes_[numberOfNodes_] = node;
     numberOfNodes_++;
   }
-};
+}
+
+void Graph::AddEdges(json *graphData){
+  edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
+  if (graphData->find("edges") != graphData->end()) {
+    json edges = (*graphData)["edges"];
+    for (auto edge : edges){
+      if (edge.find("source") != edge.end() && edge.find("target") != edge.end()){
+        const unsigned int sourceNode = edge["source"];
+        const unsigned int targetNode = edge["target"];
+        AddEdge(sourceNode, targetNode);
+      }
+    }
+  }
+}
+
+void Graph::AddEdge(const unsigned int source, const unsigned int target){
+  if(ValidateEdge(source, target)){
+    edgesConnected_[target*numberOfNodes_ + source] = 1;
+    edgesConnected_[source*numberOfNodes_ + target] = 1; // EPA make symmetric
+  }
+}
 
 unsigned int Graph::GetNumberOfNodes(){
   return numberOfNodes_;
@@ -79,12 +94,12 @@ std::vector<unsigned int> Graph::GetNodeIds(){
   return ids;
 }
 
-float Graph::GetLengthEdge(const unsigned int node1_id, const unsigned int node2_id){
-  if (ValidateEdge(node1_id, node2_id)){
-    Node node1 = nodes_[node1_id];
-    Node node2 = nodes_[node2_id];
-    float deltaX = node1.x - node2.x;
-    float deltaY = node1.y - node2.y;
+float Graph::GetLengthEdge(const unsigned int sourceId, const unsigned int targetId){
+  if (ValidateEdge(sourceId, targetId)){
+    Node source = nodes_[sourceId];
+    Node target = nodes_[targetId];
+    float deltaX = source.x - target.x;
+    float deltaY = source.y - target.y;
     return sqrtf( deltaX * deltaX + deltaY * deltaY );
   } else {
     std::cout << "Invalid edge" << std::endl;
@@ -92,19 +107,19 @@ float Graph::GetLengthEdge(const unsigned int node1_id, const unsigned int node2
   }
 };
 
-float Graph::GetVisibility(const unsigned int node1, const unsigned int node2){
-  if (ValidateEdge(node1, node2)){
-      return 1 / GetLengthEdge(node1, node2);
+float Graph::GetVisibility(const unsigned int source, const unsigned int target){
+  if (ValidateEdge(source, target)){
+      return 1 / GetLengthEdge(source, target);
   } else {
     std::cout << "Invalid edge" << std::endl;
     return -1;
   }
 };
 
-bool Graph::ValidateEdge(const unsigned int node1, const unsigned int node2) {
-  bool bounded1 = node1 < numberOfNodes_;
-  bool bounded2 = node2 < numberOfNodes_;
-  bool differentNodes = node1 != node2;
+bool Graph::ValidateEdge(const unsigned int source, const unsigned int target) {
+  bool bounded1 = source < numberOfNodes_;
+  bool bounded2 = target < numberOfNodes_;
+  bool differentNodes = source != target;
   return bounded1 && bounded2 && differentNodes;
 };
 
