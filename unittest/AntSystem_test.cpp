@@ -1,5 +1,5 @@
-#include "AntSystem.h"
 #include <boost/test/auto_unit_test.hpp>
+#include "AntSystem.hpp"
 #define BOOST_TEST_MODULE AntSystem test
 
 BOOST_AUTO_TEST_SUITE( AntSystemSuite )
@@ -16,8 +16,8 @@ BOOST_AUTO_TEST_CASE( InitPheromoneLevels )
 {
   antSystem.InitPheromoneLevels();
   unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
-  for(unsigned int i = 0; i< numberOfNodes; i++){
-    for(unsigned int j = i+1; j< numberOfNodes; j++){
+  for(unsigned int i = 0; i< numberOfNodes; ++i){
+    for(unsigned int j = i+1; j< numberOfNodes; ++j){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 1);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 1);
@@ -45,16 +45,16 @@ BOOST_AUTO_TEST_CASE( UpdatePheromoneLevels )
   std::vector<float> deltaPheromone(numberOfNodes * numberOfNodes , 1);
   antSystem.UpdatePheromoneLevels(&deltaPheromone);
 
-  for(unsigned int i = 0; i< numberOfNodes; i++){
-    for(unsigned int j = i+1; j< numberOfNodes; j++){
+  for(unsigned int i = 0; i< numberOfNodes; ++i){
+    for(unsigned int j = i+1; j< numberOfNodes; ++j){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 2);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 2);
     }
   }
   antSystem.InitPheromoneLevels();
-  for(unsigned int i = 0; i< numberOfNodes; i++){
-    for(unsigned int j = i+1; j< numberOfNodes; j++){
+  for(unsigned int i = 0; i< numberOfNodes; ++i){
+    for(unsigned int j = i+1; j< numberOfNodes; ++j){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 1);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 1);
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE( ResetPheromoneLevel )
 {
   antSystem.InitPheromoneLevels();
   unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
-  for(unsigned int i = 0; i< numberOfNodes; i++){
-    for(unsigned int j = i+1; j< numberOfNodes; j++){
+  for(unsigned int i = 0; i< numberOfNodes; ++i){
+    for(unsigned int j = i+1; j< numberOfNodes; ++j){
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(i, j), 1);
       // Symmetry
       BOOST_CHECK_EQUAL(antSystem.GetPheromoneLevel(j, i), 1);

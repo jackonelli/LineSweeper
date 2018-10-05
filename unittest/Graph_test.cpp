@@ -1,5 +1,5 @@
-#include "Graph.h"
 #include <boost/test/auto_unit_test.hpp>
+#include "Graph.hpp"
 #define BOOST_TEST_MODULE Graph test
 
 BOOST_AUTO_TEST_SUITE( GraphSuite )

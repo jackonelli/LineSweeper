@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include "AntSystem.h"
+#include "AntSystem.hpp"
 using namespace std;
 int main(){
   srand(time(NULL)); // Does this even work?

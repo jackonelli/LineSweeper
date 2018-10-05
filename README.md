@@ -26,13 +26,15 @@ To build the code:
 JSON for C++. Header only at: https://github.com/nlohmann/json
 
 ## TODO
- - Common tools in sep file
+ - ~~Common tools in sep file~~
  - ~~Better datastructure for paths~~
  - txt to json for data
  - ~~Unit tests~~
  - ~~Cmake~~
  - ~~javascript graph~~
  - Wasm check
+ - Const shit up
+ - Better logging
  - ~~Original problem verify~~
  - ~~Unsigned~~
 

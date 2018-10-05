@@ -1,25 +1,24 @@
-#include "Graph.h"
-#include "tools/fileIO.cpp"
-#include "json.hpp"
 #include <fstream>
 #include <math.h>
 #include <stdlib.h>
 #include <iostream> // TODO: remove
 #include <numeric>
+#include "Graph.hpp"
+#include "tools/fileIO.cpp"
+#include "tools/json.hpp"
 
 using json = nlohmann::json;
 
-Graph::Graph()
-{
+Graph::Graph(){
   numberOfNodes_ = 0;
 }
 
-Graph::Graph(std::string graphFilePath) : graphFilePath_(graphFilePath)
-{
+Graph::Graph(std::string graphFilePath) : graphFilePath_(graphFilePath){
   numberOfNodes_ = 0;
 }
+
 Graph::~Graph(){
-};
+}
 
 void Graph::GraphFromFile(){
   GraphFromFile(graphFilePath_);
@@ -56,7 +55,7 @@ void Graph::AddNode(float x, float y){
   if(novelCoord && !nodeExist){
     Node node = {x, y};
     nodes_[numberOfNodes_] = node;
-    numberOfNodes_++;
+    ++numberOfNodes_;
   }
 }
 
@@ -81,11 +80,11 @@ void Graph::AddEdge(const unsigned int source, const unsigned int target){
   }
 }
 
-unsigned int Graph::GetNumberOfNodes(){
+unsigned int Graph::GetNumberOfNodes() const{
   return numberOfNodes_;
 };
 
-std::vector<unsigned int> Graph::GetNodeIds(){
+std::vector<unsigned int> Graph::GetNodeIds() const{
   std::vector<unsigned int> ids;
   ids.reserve(nodes_.size());
   for(auto &kv : nodes_ ){
@@ -94,10 +93,10 @@ std::vector<unsigned int> Graph::GetNodeIds(){
   return ids;
 }
 
-float Graph::GetLengthEdge(const unsigned int sourceId, const unsigned int targetId){
+float Graph::GetLengthEdge(const unsigned int sourceId, const unsigned int targetId) const{
   if (ValidateEdge(sourceId, targetId)){
-    Node source = nodes_[sourceId];
-    Node target = nodes_[targetId];
+    const Node source = nodes_.find(sourceId)->second;
+    const Node target = nodes_.find(targetId)->second;
     float deltaX = source.x - target.x;
     float deltaY = source.y - target.y;
     return sqrtf( deltaX * deltaX + deltaY * deltaY );
@@ -107,7 +106,7 @@ float Graph::GetLengthEdge(const unsigned int sourceId, const unsigned int targe
   }
 };
 
-float Graph::GetVisibility(const unsigned int source, const unsigned int target){
+float Graph::GetVisibility(const unsigned int source, const unsigned int target) const{
   if (ValidateEdge(source, target)){
       return 1 / GetLengthEdge(source, target);
   } else {
@@ -116,14 +115,14 @@ float Graph::GetVisibility(const unsigned int source, const unsigned int target)
   }
 };
 
-bool Graph::ValidateEdge(const unsigned int source, const unsigned int target) {
-  bool bounded1 = source < numberOfNodes_;
-  bool bounded2 = target < numberOfNodes_;
+bool Graph::ValidateEdge(const unsigned int source, const unsigned int target) const{
+  bool boundedSource = source < numberOfNodes_;
+  bool boundedTarget = target < numberOfNodes_;
   bool differentNodes = source != target;
-  return bounded1 && bounded2 && differentNodes;
+  return boundedSource && boundedTarget && differentNodes;
 };
 
-float Graph::LengthNearestNeighbourPath(){
+float Graph::LengthNearestNeighbourPath() const{
   if(numberOfNodes_ == 0){
     const std::string s = "Empty graph";
     std::cout << s << std::endl;
@@ -133,7 +132,7 @@ float Graph::LengthNearestNeighbourPath(){
   return LengthNearestNeighbourPath(startingNode);
 };
 
-float Graph::LengthNearestNeighbourPath(const unsigned int startingNode){
+float Graph::LengthNearestNeighbourPath(const unsigned int startingNode) const{
   if(nodes_.count(startingNode) == 0){
     const std::string s = "Node not in graph";
     std::cout << s << std::endl;
@@ -150,7 +149,7 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode){
   std::unordered_map<unsigned int, Node> unvisitedNodes(nodes_);
   unvisitedNodes.erase(startingNode);
 
-  for(unsigned int i = 0; i < numberOfNodes_-1; i++){
+  for(unsigned int i = 0; i < numberOfNodes_-1; ++i){
     minDist = 100;
     for (auto node : unvisitedNodes) {
       dist = GetLengthEdge(node.first, currentNode);
@@ -167,17 +166,17 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode){
   return totalDist;
 };
 
-float Graph::GetPathLength(const std::vector<unsigned int> *path){
+float Graph::GetPathLength(const std::vector<unsigned int> *path) const{
   // TODO: switch to path pointer
   const unsigned int n = path->size();
   float pathLength = 0;
-  for( unsigned int i = 0; i < (n-1); i++){
+  for( unsigned int i = 0; i < (n-1); ++i){
     pathLength += GetLengthEdge((*path)[i+1], (*path)[i]);
   }
   return pathLength;
 };
 
-void Graph::PrintNodes(){
+void Graph::PrintNodes() const{
   for(auto &kv : nodes_){
       unsigned int id = kv.first;
       Node node = kv.second;
@@ -185,22 +184,22 @@ void Graph::PrintNodes(){
   };
 };
 
-void Graph::PrintConnectedEdges(){
-  for(unsigned int i = 0; i < numberOfNodes_; i++){
-    for(unsigned int j = 0; j < numberOfNodes_; j++){
+void Graph::PrintConnectedEdges() const{
+  for(unsigned int i = 0; i < numberOfNodes_; ++i){
+    for(unsigned int j = 0; j < numberOfNodes_; ++j){
       std::cout << edgesConnected_[i*numberOfNodes_ + j] << " ";
     }
     std::cout << std::endl;
   }
 };
 
-void Graph::PrintPath(const std::vector<unsigned int> *path){
+void Graph::PrintPath(const std::vector<unsigned int> *path) const{
   std::cout << "Path" << std::endl;
   for(auto node : *path) std::cout << node << " --> ";
   std::cout << std::endl;
 };
 
-void Graph::StorePath(const std::vector<unsigned int> *path){
+void Graph::StorePath(const std::vector<unsigned int> *path) const{
   json graphData = fileIO::ReadJsonFile(graphFilePath_);
   json jsonPath(*path);
   graphData["storePath"] = jsonPath;
