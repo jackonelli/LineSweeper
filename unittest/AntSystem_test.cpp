@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE( UpdateDeltaPheromoneLevels )
   std::vector<unsigned int> path = {0, 1, 2, 3};
   unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
   std::vector<float> deltaPheromone(numberOfNodes * numberOfNodes , 0);
-  antSystem.UpdateDeltaPheromoneLevels(&deltaPheromone, &path);
+  antSystem.UpdateDeltaPheromoneLevels(deltaPheromone, path);
   BOOST_CHECK_EQUAL(deltaPheromone[1*numberOfNodes + 2], 1.f/3);
   // Asymmetry
   BOOST_CHECK_EQUAL(deltaPheromone[2*numberOfNodes + 1], 0);
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE( UpdatePheromoneLevels )
   antSystem.InitPheromoneLevels();
   unsigned int numberOfNodes = antSystem.GetNumberOfNodes();
   std::vector<float> deltaPheromone(numberOfNodes * numberOfNodes , 1);
-  antSystem.UpdatePheromoneLevels(&deltaPheromone);
+  antSystem.UpdatePheromoneLevels(deltaPheromone);
 
   for(unsigned int i = 0; i< numberOfNodes; ++i){
     for(unsigned int j = i+1; j< numberOfNodes; ++j){

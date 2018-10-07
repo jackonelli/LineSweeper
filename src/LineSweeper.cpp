@@ -18,7 +18,7 @@ int main(){
   while(antSystem.GetTotalIterations() < 20){
     std::cout << "Iteration " << antSystem.GetTotalIterations() << ", path length = " << antSystem.GetMinPathLength() << std::endl;
     shortestPath = antSystem.GetShortestPath();
-    antSystem.PrintPath(&shortestPath);
+    antSystem.PrintPath(shortestPath);
     antSystem.ImprovePath(10);
   }
   antSystem.StoreBestPath();

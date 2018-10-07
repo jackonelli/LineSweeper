@@ -26,13 +26,13 @@ void Graph::GraphFromFile(){
 
 void Graph::GraphFromFile(const std::string graphFilePath){
   json graphData = fileIO::ReadJsonFile(graphFilePath.c_str());
-  AddNodes(&graphData);
-  AddEdges(&graphData);
+  AddNodes(graphData);
+  AddEdges(graphData);
 }
 
-void Graph::AddNodes(json *graphData){
-  if (graphData->find("nodes") != graphData->end()) {
-    json nodes = (*graphData)["nodes"];
+void Graph::AddNodes(json& graphData){
+  if (graphData.find("nodes") != graphData.end()) {
+    json nodes = graphData["nodes"];
     for (auto node : nodes){
       if (node.find("x") != node.end() && node.find("y") != node.end()){
         const float x = node["x"];
@@ -59,10 +59,10 @@ void Graph::AddNode(float x, float y){
   }
 }
 
-void Graph::AddEdges(json *graphData){
+void Graph::AddEdges(json& graphData){
   edgesConnected_.resize(numberOfNodes_ * numberOfNodes_);
-  if (graphData->find("edges") != graphData->end()) {
-    json edges = (*graphData)["edges"];
+  if (graphData.find("edges") != graphData.end()) {
+    json edges = graphData["edges"];
     for (auto edge : edges){
       if (edge.find("source") != edge.end() && edge.find("target") != edge.end()){
         const unsigned int sourceNode = edge["source"];
@@ -166,12 +166,12 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode) const{
   return totalDist;
 };
 
-float Graph::GetPathLength(const std::vector<unsigned int> *path) const{
+float Graph::GetPathLength(const std::vector<unsigned int>& path) const{
   // TODO: switch to path pointer
-  const unsigned int n = path->size();
+  const unsigned int n = path.size();
   float pathLength = 0;
   for( unsigned int i = 0; i < (n-1); ++i){
-    pathLength += GetLengthEdge((*path)[i+1], (*path)[i]);
+    pathLength += GetLengthEdge(path[i+1], path[i]);
   }
   return pathLength;
 };
@@ -193,15 +193,15 @@ void Graph::PrintConnectedEdges() const{
   }
 };
 
-void Graph::PrintPath(const std::vector<unsigned int> *path) const{
+void Graph::PrintPath(const std::vector<unsigned int>& path) const{
   std::cout << "Path" << std::endl;
-  for(auto node : *path) std::cout << node << " --> ";
+  for(auto node : path) std::cout << node << " --> ";
   std::cout << std::endl;
 };
 
-void Graph::StorePath(const std::vector<unsigned int> *path) const{
+void Graph::StorePath(const std::vector<unsigned int>& path) const{
   json graphData = fileIO::ReadJsonFile(graphFilePath_);
-  json jsonPath(*path);
+  json jsonPath(path);
   graphData["storePath"] = jsonPath;
   graphData["lengthStorePath"] = GetPathLength(path);
   fileIO::WriteJsonToFile(&graphData, graphFilePath_);

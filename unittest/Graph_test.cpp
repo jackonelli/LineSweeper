@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE( PathLength )
  graph.AddNode(4.0, 6.0);
  std::vector<unsigned int> path = {0, 1, 2, 3};
 
- BOOST_CHECK_EQUAL(graph.GetPathLength(&path), 8);
+ BOOST_CHECK_EQUAL(graph.GetPathLength(path), 8);
 }
 
 BOOST_AUTO_TEST_CASE( NearestNeighbour )

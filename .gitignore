@@ -3,3 +3,4 @@ web/ext/*
 web/img/store/
 web/script/*
 tags
+*json.hpp

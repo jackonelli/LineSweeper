@@ -14,8 +14,8 @@ class Graph
     ~Graph();
     void GraphFromFile();
     void GraphFromFile(const std::string graphFilePath);
-    void AddNodes(json * graphData);
-    void AddEdges(json *graphData);
+    void AddNodes(json& graphData);
+    void AddEdges(json& graphData);
     void AddEdge(const unsigned int source, const unsigned int target);
     void AddNode(float x, float y);
     unsigned int GetNumberOfNodes() const;
@@ -25,11 +25,11 @@ class Graph
     bool ValidateEdge(const unsigned int node1, const unsigned int node2) const;
     float LengthNearestNeighbourPath() const;
     float LengthNearestNeighbourPath(const unsigned int startingNode) const;
-    float GetPathLength(const std::vector<unsigned int> *path) const;
+    float GetPathLength(const std::vector<unsigned int>& path) const;
     void PrintConnectedEdges() const;
     void PrintNodes() const;
-    void PrintPath(const std::vector<unsigned int> *path) const;
-    void StorePath(const std::vector<unsigned int> *path) const;
+    void PrintPath(const std::vector<unsigned int>& path) const;
+    void StorePath(const std::vector<unsigned int>& path) const;
 
   private:
     typedef struct {

@@ -50,18 +50,18 @@ void AntSystem::InitPheromoneLevels(){
   pheromoneLevel_ = std::vector<float>(numberOfNodes * numberOfNodes, initialPheromoneLevel);
 };
 
-void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, const std::vector<unsigned int> * path) const{
+void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float>& deltaPheromone, const std::vector<unsigned int>& path) const{
   const float pathLength = graph_.GetPathLength(path);
-  const unsigned int numberOfNodesInPath = path->size();
+  const unsigned int numberOfNodesInPath = path.size();
   const unsigned int numberOfNodes = graph_.GetNumberOfNodes();
   if (pathLength > 0 && numberOfNodesInPath >= numberOfNodes){
     unsigned int currentNode, nextNode;
 
     for(unsigned int iNode = 0; iNode < numberOfNodesInPath - 1; ++iNode ){
-        currentNode = (*path)[iNode] ;
-        nextNode = (*path)[iNode+1] ;
+        currentNode = path[iNode] ;
+        nextNode = path[iNode+1] ;
         if(graph_.ValidateEdge(currentNode, nextNode)){
-          (*deltaPheromone)[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
+          deltaPheromone[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
         } else {
           const std::string s = "Invalid edge";
           std::cout << s << std::endl;
@@ -76,11 +76,15 @@ void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromone, 
   }
 }
 
-void AntSystem::UpdatePheromoneLevels(const std::vector<float> * deltaPheromone){
-  std::transform (pheromoneLevel_.begin(), pheromoneLevel_.end(), (*deltaPheromone).begin(), pheromoneLevel_.begin(), std::plus<float>());
+void AntSystem::UpdatePheromoneLevels(const std::vector<float>& deltaPheromone){
+  // Make STL scaling work
+  for(auto edge_pheromone : pheromoneLevel_){
+    edge_pheromone *= 1 - evaporation_;
+  }
+  std::transform(pheromoneLevel_.begin(), pheromoneLevel_.end(), deltaPheromone.begin(), pheromoneLevel_.begin(), std::plus<float>());
 }
 
-float AntSystem::GetPheromoneLevel(const unsigned int jNode, const unsigned int iNode)  const{
+float AntSystem::GetPheromoneLevel(const unsigned int jNode, const unsigned int iNode) const{
   if (graph_.ValidateEdge(jNode, iNode)){
     unsigned int numberOfNodes = graph_.GetNumberOfNodes();
       return pheromoneLevel_[iNode*numberOfNodes + jNode];
@@ -120,32 +124,32 @@ std::unordered_set<unsigned int> AntSystem::ResetUnvisitedNodes() const{
   return unvisitedNodes;
 }
 
-unsigned int AntSystem::GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int> unvisitedNodes) const{
+unsigned int AntSystem::GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int>& unvisitedNodes) const{
   std::vector<std::pair<unsigned int, float>> transitionProbability;
   transitionProbability.reserve(unvisitedNodes.size());
-  CalculateTransitionProbability(&transitionProbability, &unvisitedNodes, currentNode);
-  return RouletteWheelSelection(&transitionProbability);
+  CalculateTransitionProbability(transitionProbability, unvisitedNodes, currentNode);
+  return RouletteWheelSelection(transitionProbability);
 }
 
-void AntSystem::CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>> *transitionProbability, const std::unordered_set<unsigned int> *unvisitedNodes, const unsigned int currentNode) const{
+void AntSystem::CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>>& transitionProbability, const std::unordered_set<unsigned int>& unvisitedNodes, const unsigned int currentNode) const{
   float totalProbability = 0;
-  for(auto node : *unvisitedNodes) { // Sort while creating
+  for(auto node : unvisitedNodes) { // TODO: Sort while creating
     float tmpProbability = GetPheromoneLevel(currentNode, node) * alpha_ * graph_.GetVisibility(currentNode, node) * beta_;
-    transitionProbability->push_back(std::make_pair(node,tmpProbability));
+    transitionProbability.push_back(std::make_pair(node, tmpProbability));
     totalProbability += tmpProbability;
   }
-  for (auto &probPair : *transitionProbability) probPair.second /= totalProbability;
-  std::sort(transitionProbability->begin(), transitionProbability->end(), PairSortDescValue); // Sort descending
+  for (auto &probPair : transitionProbability) probPair.second /= totalProbability;
+  std::sort(transitionProbability.begin(), transitionProbability.end(), PairSortDescValue); // Sort descending
 }
 
-unsigned int AntSystem::RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>> *transitionProbability) const{
+unsigned int AntSystem::RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>>& transitionProbability) const{
   const float r = (float) rand() / (float) RAND_MAX; // U(0,1)
   unsigned int index= 0;
-  std::pair<unsigned int, float> probPair = (*transitionProbability)[index];
+  std::pair<unsigned int, float> probPair = (transitionProbability)[index];
   float cumulativeProbability = probPair.second;
-  while(cumulativeProbability < r && index < transitionProbability->size()){
+  while(cumulativeProbability < r && index < transitionProbability.size()){
     ++index;
-    probPair = (*transitionProbability)[index];
+    probPair = transitionProbability[index];
     cumulativeProbability += probPair.second;
   }
   return probPair.first;
@@ -159,29 +163,29 @@ void AntSystem::ImprovePath(const unsigned int maxNumberOfIterations){
     std::fill(deltaPheromone.begin(), deltaPheromone.end(), 0);
     for(unsigned int kAnt = 0; kAnt < numberOfAnts_; ++kAnt){
       std::vector<unsigned int> path = GeneratePath();
-      float pathLength = graph_.GetPathLength(&path);
-      UpdateDeltaPheromoneLevels(&deltaPheromone, &path);
+      float pathLength = graph_.GetPathLength(path);
+      UpdateDeltaPheromoneLevels(deltaPheromone, path);
       if(pathLength < minPathLength_){
         minPathLength_ = pathLength;
         shortestPath_ = path;
       }
-      UpdatePheromoneLevels(&deltaPheromone);
+      UpdatePheromoneLevels(deltaPheromone);
     }
   }
   totalIterations_ += localIteration;
 };
 
-void AntSystem::PrintPath(const std::vector<unsigned int> *path) const{
+void AntSystem::PrintPath(const std::vector<unsigned int>& path) const{
   graph_.PrintPath(path);
 }
 
-bool AntSystem::PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b)
+bool AntSystem::PairSortDescValue(const std::pair<unsigned int,float>& a, const std::pair<unsigned int,float>& b)
 {
        return (a.second > b.second);
 }
 
 void AntSystem::StoreBestPath() const{
-  graph_.StorePath(&shortestPath_);
+  graph_.StorePath(shortestPath_);
 }
 
 #ifdef __EMSCRIPTEN__

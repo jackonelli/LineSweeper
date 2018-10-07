@@ -14,20 +14,21 @@ class AntSystem
     float GetMinPathLength() const;
     std::vector<unsigned int> GetShortestPath() const;
     void InitPheromoneLevels();
-    void UpdateDeltaPheromoneLevels(std::vector<float> * deltaPheromoneLevel, const std::vector<unsigned int> * path) const;
-    void UpdatePheromoneLevels(const std::vector<float> * deltaPheromoneLevel);
+    void UpdateDeltaPheromoneLevels(std::vector<float>& deltaPheromoneLevel, const std::vector<unsigned int>& path) const;
+    void UpdatePheromoneLevels(const std::vector<float>& deltaPheromoneLevel);
+    float ScaleVector(float element);
     float GetPheromoneLevel(const unsigned int node1, const unsigned int node2) const;
     std::vector<unsigned int> GeneratePath() const;
     std::unordered_set<unsigned int> ResetUnvisitedNodes() const;
-    unsigned int GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int> unvisitedNodes) const;
-    void CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>> *transitionProbability, const std::unordered_set<unsigned int> *unvisitedNodes, const unsigned int currentNode) const;
-    unsigned int RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>> *transitionProbability) const;
+    unsigned int GetNextNode(const unsigned int currentNode, const std::unordered_set<unsigned int>& unvisitedNodes) const;
+    void CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>>& transitionProbability, const std::unordered_set<unsigned int>& unvisitedNodes, const unsigned int currentNode) const;
+    unsigned int RouletteWheelSelection(const std::vector<std::pair<unsigned int, float>>& transitionProbability) const;
     void ImprovePath(const unsigned int maxNumberOfIterations);
-    void PrintPath(const std::vector<unsigned int> *path) const;
+    void PrintPath(const std::vector<unsigned int>& path) const;
     void StoreBestPath() const;
 
   private:
-    static bool PairSortDescValue(const std::pair<unsigned int,float> &a, const std::pair<unsigned int,float> &b);
+    static bool PairSortDescValue(const std::pair<unsigned int,float>& a, const std::pair<unsigned int,float>& b);
     Graph graph_;
     const unsigned int numberOfAnts_;
     const float targetPathLength_;
