@@ -9,11 +9,11 @@ using json = nlohmann::json;
 class Graph
 {
   public:
-    Graph(std::string graphFilePath_);
+    explicit Graph(std::string& graphFilePath_);
     Graph();
     ~Graph();
     void GraphFromFile();
-    void GraphFromFile(const std::string graphFilePath);
+    void GraphFromFile(const std::string& graphFilePath);
     void AddNodes(json& graphData);
     void AddEdges(json& graphData);
     void AddEdge(const unsigned int source, const unsigned int target);

@@ -54,20 +54,20 @@ void AntSystem::UpdateDeltaPheromoneLevels(std::vector<float>& deltaPheromone, c
   const float pathLength = graph_.GetPathLength(path);
   const unsigned int numberOfNodesInPath = path.size();
   const unsigned int numberOfNodes = graph_.GetNumberOfNodes();
-  if (pathLength > 0 && numberOfNodesInPath >= numberOfNodes){
-    unsigned int currentNode, nextNode;
 
+  if (pathLength > 0 && numberOfNodesInPath >= numberOfNodes){
     for(unsigned int iNode = 0; iNode < numberOfNodesInPath - 1; ++iNode ){
-        currentNode = path[iNode] ;
-        nextNode = path[iNode+1] ;
-        if(graph_.ValidateEdge(currentNode, nextNode)){
-          deltaPheromone[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
-        } else {
-          const std::string s = "Invalid edge";
-          std::cout << s << std::endl;
-          std::cout << currentNode << ", " << nextNode << std::endl;
-          throw s;
-        };
+      unsigned int currentNode, nextNode;
+      currentNode = path[iNode];
+      nextNode = path[iNode+1];
+      if(graph_.ValidateEdge(currentNode, nextNode)){
+        deltaPheromone[currentNode * numberOfNodes + nextNode] += 1 / pathLength;
+      } else {
+        const std::string s = "Invalid edge";
+        std::cout << s << std::endl;
+        std::cout << currentNode << ", " << nextNode << std::endl;
+        throw s;
+      }
     }
   } else {
     const std::string s = "Incorrect path";
@@ -97,7 +97,6 @@ float AntSystem::GetPheromoneLevel(const unsigned int jNode, const unsigned int 
 }
 
 std::vector<unsigned int> AntSystem::GeneratePath() const{
-  unsigned int currentNode, nextNode;
   const unsigned int numberOfNodes = graph_.GetNumberOfNodes();
   std::vector<unsigned int> path;
   path.reserve(numberOfNodes);
@@ -105,8 +104,9 @@ std::vector<unsigned int> AntSystem::GeneratePath() const{
   const unsigned int startingNode = rand() % numberOfNodes;
   path.push_back(startingNode);
   unvisitedNodes.erase(startingNode);
-  currentNode = startingNode;
+  unsigned int currentNode = startingNode;
   for(unsigned int i=0; i < numberOfNodes - 1; ++i) {
+    unsigned int nextNode;
     nextNode = GetNextNode(currentNode, unvisitedNodes);
     path.push_back(nextNode);
     currentNode = nextNode;

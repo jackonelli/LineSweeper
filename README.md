@@ -28,13 +28,16 @@ JSON for C++. Header only at: https://github.com/nlohmann/json
 ## TODO
  - ~~Common tools in sep file~~
  - ~~Better datastructure for paths~~
- - txt to json for data
+ - ~~txt to json for data~~
+ - ~~Cppcheck~~
  - ~~Unit tests~~
  - ~~Cmake~~
  - ~~javascript graph~~
  - Wasm check
  - Const shit up
  - Better logging
+ - Exceptions
+ - Standalone C++ main function, with command line options
  - ~~Original problem verify~~
  - ~~Unsigned~~
 

@@ -13,7 +13,7 @@ Graph::Graph(){
   numberOfNodes_ = 0;
 }
 
-Graph::Graph(std::string graphFilePath) : graphFilePath_(graphFilePath){
+Graph::Graph(std::string& graphFilePath) : graphFilePath_(graphFilePath){
   numberOfNodes_ = 0;
 }
 
@@ -24,7 +24,7 @@ void Graph::GraphFromFile(){
   GraphFromFile(graphFilePath_);
 }
 
-void Graph::GraphFromFile(const std::string graphFilePath){
+void Graph::GraphFromFile(const std::string& graphFilePath){
   json graphData = fileIO::ReadJsonFile(graphFilePath.c_str());
   AddNodes(graphData);
   AddEdges(graphData);
@@ -138,7 +138,6 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode) const{
     std::cout << s << std::endl;
     throw s;
   }
-  float dist, minDist;
   float totalDist = 0;
   unsigned int minId;
   unsigned int currentNode;
@@ -150,8 +149,9 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode) const{
   unvisitedNodes.erase(startingNode);
 
   for(unsigned int i = 0; i < numberOfNodes_-1; ++i){
-    minDist = 100;
+    float minDist = 100;
     for (auto node : unvisitedNodes) {
+      float dist;
       dist = GetLengthEdge(node.first, currentNode);
       if(dist < minDist){
         minDist = dist;
@@ -167,7 +167,6 @@ float Graph::LengthNearestNeighbourPath(const unsigned int startingNode) const{
 };
 
 float Graph::GetPathLength(const std::vector<unsigned int>& path) const{
-  // TODO: switch to path pointer
   const unsigned int n = path.size();
   float pathLength = 0;
   for( unsigned int i = 0; i < (n-1); ++i){
