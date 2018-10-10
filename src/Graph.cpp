@@ -48,7 +48,7 @@ void Graph::AddNode(float x, float y){
   for(auto &kv : nodes_){
     if(x == kv.second.x && y == kv.second.y){
       novelCoord = false;
-      std::cout << "Node already exists, node: " << kv.first << std::endl;
+      std::cout << "Node already exists, node: " << kv.first << '\n';
     }
   }
   bool nodeExist = nodes_.count(numberOfNodes_) > 0;
@@ -101,7 +101,7 @@ float Graph::GetLengthEdge(const unsigned int sourceId, const unsigned int targe
     float deltaY = source.y - target.y;
     return sqrtf( deltaX * deltaX + deltaY * deltaY );
   } else {
-    std::cout << "Invalid edge" << std::endl;
+    std::cout << "Invalid edge" << '\n';
     return -1;
   }
 };
@@ -110,7 +110,7 @@ float Graph::GetVisibility(const unsigned int source, const unsigned int target)
   if (ValidateEdge(source, target)){
       return 1 / GetLengthEdge(source, target);
   } else {
-    std::cout << "Invalid edge" << std::endl;
+    std::cout << "Invalid edge" << '\n';
     return -1;
   }
 };
@@ -125,7 +125,7 @@ bool Graph::ValidateEdge(const unsigned int source, const unsigned int target) c
 float Graph::LengthNearestNeighbourPath() const{
   if(numberOfNodes_ == 0){
     const std::string s = "Empty graph";
-    std::cout << s << std::endl;
+    std::cout << s << '\n';
     throw s;
   }
   const unsigned int startingNode = rand() % numberOfNodes_;
@@ -135,7 +135,7 @@ float Graph::LengthNearestNeighbourPath() const{
 float Graph::LengthNearestNeighbourPath(const unsigned int startingNode) const{
   if(nodes_.count(startingNode) == 0){
     const std::string s = "Node not in graph";
-    std::cout << s << std::endl;
+    std::cout << s << '\n';
     throw s;
   }
   float totalDist = 0;
@@ -179,7 +179,7 @@ void Graph::PrintNodes() const{
   for(auto &kv : nodes_){
       unsigned int id = kv.first;
       Node node = kv.second;
-      std::cout << "Node: "<< id << ",\tx = " << node.x << ",\ty = " << node.y << std::endl;
+      std::cout << "Node: "<< id << ",\tx = " << node.x << ",\ty = " << node.y << '\n';
   };
 };
 
@@ -188,14 +188,14 @@ void Graph::PrintConnectedEdges() const{
     for(unsigned int j = 0; j < numberOfNodes_; ++j){
       std::cout << edgesConnected_[i*numberOfNodes_ + j] << " ";
     }
-    std::cout << std::endl;
+    std::cout << '\n';
   }
 };
 
 void Graph::PrintPath(const std::vector<unsigned int>& path) const{
-  std::cout << "Path" << std::endl;
+  std::cout << "Path" << '\n';
   for(auto node : path) std::cout << node << " --> ";
-  std::cout << std::endl;
+  std::cout << '\n';
 };
 
 void Graph::StorePath(const std::vector<unsigned int>& path) const{

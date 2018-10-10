@@ -20,7 +20,7 @@ json ReadJsonFile(const std::string filePath){
 void WriteJsonToFile(const json *graphData, const std::string filePath){
   // TODO: Verify file read
   std::ofstream jsonFile(filePath.c_str());
-  jsonFile << std::setw(4) << *graphData << std::endl;
+  jsonFile << std::setw(4) << *graphData << '\n';
   jsonFile.close();
 }
 

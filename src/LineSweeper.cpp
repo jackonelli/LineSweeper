@@ -18,7 +18,7 @@ int main(){
   std::vector<unsigned int> shortestPath;
   shortestPath.reserve(antSystem.GetNumberOfNodes());
   while(antSystem.GetTotalIterations() < 1e9){
-    std::cout << "Iteration " << antSystem.GetTotalIterations() << ", path length = " << antSystem.GetMinPathLength() << std::endl;
+    std::cout << "Iteration " << antSystem.GetTotalIterations() << ", path length = " << antSystem.GetMinPathLength() << '\n';
     shortestPath = antSystem.GetShortestPath();
     antSystem.PrintPath(shortestPath);
     antSystem.ImprovePath(10000);
