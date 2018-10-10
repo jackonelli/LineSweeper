@@ -1,10 +1,11 @@
-add_library(Graph Graph.h Graph.cpp tools/fileIO.cpp)
-add_library(AntSystem AntSystem.h AntSystem.cpp)
+add_library(Graph Graph.cpp tools/fileIO.cpp)
+add_library(AntSystem AntSystem.cpp)
 add_executable(linesweeper LineSweeper.cpp)
 target_link_libraries(linesweeper AntSystem Graph)
 install(TARGETS linesweeper DESTINATION ${CMAKE_BINARY_DIR})
 
 add_custom_target(wasm
+  # I think it is possible to run emsdk_env instead of all settings
   COMMAND export
     PATH=$PATH:/home/jakob/dev/emsdk
     PATH=$PATH:/home/jakob/dev/emsdk/clang/e1.38.12_64bit
