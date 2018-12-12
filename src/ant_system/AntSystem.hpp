@@ -2,7 +2,7 @@
 #define ANTSYSTEM_H
 #include <vector>
 #include <unordered_set>
-#include "Graph.hpp"
+#include "../graph/Graph.hpp"
 class AntSystem
 {
   public:

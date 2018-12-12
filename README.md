@@ -33,6 +33,7 @@ JSON for C++. Header only at: https://github.com/nlohmann/json
  - ~~Unit tests~~
  - ~~Cmake~~
  - ~~javascript graph~~
+ - Shared lib .so or no lib at all
  - Wasm check
  - Const shit up
  - Better logging

@@ -4,8 +4,7 @@
 #include <iostream> // TODO: remove
 #include <numeric>
 #include "Graph.hpp"
-#include "tools/fileIO.cpp"
-#include "tools/json.hpp"
+#include "../tools/fileIO.cpp"
 
 using json = nlohmann::json;
 

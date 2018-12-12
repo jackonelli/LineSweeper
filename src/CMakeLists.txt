@@ -1,6 +1,14 @@
-add_library(Graph Graph.cpp tools/fileIO.cpp)
-add_library(AntSystem AntSystem.cpp)
+add_subdirectory(graph)
+add_subdirectory(ant_system)
+
 add_executable(linesweeper LineSweeper.cpp)
+target_compile_options(linesweeper PRIVATE
+                       -Wall
+                       -Wextra
+                       -Wundef
+                       -Wfloat-equal
+                       -O1
+                       )
 target_link_libraries(linesweeper AntSystem Graph)
 install(TARGETS linesweeper DESTINATION ${CMAKE_BINARY_DIR})
 
@@ -19,8 +27,8 @@ add_custom_target(wasm
     EMSDK_NODE=/home/jakob/dev/emsdk/node/8.9.1_64bit/bin/node
     EMSCRIPTEN=/home/jakob/dev/emsdk/emscripten/1.38.12
   COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/web/script
-  COMMAND em++ --bind -O3 ${CMAKE_SOURCE_DIR}/src/AntSystem.cpp ${CMAKE_SOURCE_DIR}/src/Graph.cpp -s WASM=1 -o ${CMAKE_SOURCE_DIR}/web/script/AntSystem.js
-  SOURCES AntSystem.cpp Graph.cpp
+  COMMAND em++ --bind -O3 ${CMAKE_SOURCE_DIR}/src/ant_system/AntSystem.cpp ${CMAKE_SOURCE_DIR}/src/graph/Graph.cpp -s WASM=1 -o ${CMAKE_SOURCE_DIR}/web/script/AntSystem.js
+  SOURCES ant_system/AntSystem.cpp graph/Graph.cpp
   VERBATIM
   )
 
