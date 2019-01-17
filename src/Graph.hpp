@@ -1,6 +1,6 @@
 #ifndef GRAPH_H
 #define GRAPH_H
-#include "tools/json.hpp"
+#include "nlohmann/json.hpp"
 #include <vector>
 #include <string>
 #include <unordered_map>
