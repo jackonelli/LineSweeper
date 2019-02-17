@@ -12,7 +12,7 @@ use serde_json::Deserializer;
 
 mod tools;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Node{
     x: f32,
     y: f32,
@@ -68,17 +68,40 @@ impl Graph {
         edges
     }
 
-    pub fn length_nearest_neighbour_path(&self, start_node: Option<usize>) -> f32 {
-        let mut unvisited_nodes = self.reset_unvisited_nodes();
-        let mut current_node = start_node.unwrap_or(0);
-        unvisited_nodes.remove(&current_node);
+    pub fn length_nearest_neighbour_path(&self, start_id: Option<usize>) -> f32 {
+        let mut unvisited_nodes = self.nodes.clone();
+        let mut current_node = unvisited_nodes
+            .remove(&start_id.unwrap_or(0))
+            .unwrap();
+        let mut total_length = 0.0;
+        for _ in 0..unvisited_nodes.len() {
+            let(nearest_id, length) = Graph::get_nearest_node(&unvisited_nodes,
+                                                              &current_node);
+            total_length += length;
+            current_node = unvisited_nodes.remove(&nearest_id).unwrap();
+        }
+        total_length
+    }
+
+    fn get_nearest_node(unvisited_nodes: &HashMap<usize, Node>,
+                        current_node: &Node) -> (usize, f32) {
         let mut shortest_length = std::f32::INFINITY;
         let mut length: f32;
-        for next_node in &unvisited_nodes {
-            length = self.get_edge_length(current_node, *next_node);
+        let mut nearest_id = 0;
+        for (next_id, next_node) in unvisited_nodes {
+            length = Graph::get_edge_length(current_node, next_node);
+            if length < shortest_length {
+                shortest_length = length;
+                nearest_id = *next_id;
+            }
         }
-        let total_length = 0.0;
-        total_length
+        (nearest_id, shortest_length)
+    }
+
+    fn get_edge_length(node_1: &Node, node_2: &Node) -> f32 {
+        let dx = node_1.x - node_2.x;
+        let dy = node_1.y - node_2.y;
+        (dx * dx + dy * dy).sqrt()
     }
 
     pub fn reset_unvisited_nodes(&self) -> HashSet<usize> {
@@ -87,9 +110,6 @@ impl Graph {
             unvisited_nodes.insert(*key);
         }
         unvisited_nodes
-    }
-    pub fn get_edge_length(&self, node_1: Node, node_2: Node) -> f32 {
-        0.0
     }
 }
 
@@ -128,12 +148,31 @@ mod tests {
             nodes: tmp_nodes,
             edges_connected: vec![],
         };
-        assert_eq!(test_graph.length_nearest_neighbour_path(Some(1)), 3.0);
+        assert_eq!(test_graph.length_nearest_neighbour_path(Some(0)), 3.0);
     }
 
+    #[test]
+    fn get_next_node() {
+        let mut tmp_nodes = HashMap::new();
+        tmp_nodes.insert(1, Node{x: 0.0, y: 1.0});
+        tmp_nodes.insert(2, Node{x: 1.0, y: 1.0});
+        tmp_nodes.insert(3, Node{x: 1.0, y: 2.0});
+        let test_graph =  Graph{
+            number_of_nodes: 4,
+            nodes: tmp_nodes,
+            edges_connected: vec![],
+        };
+        let current_node = Node{x: 0.0, y: 0.0};
+        let (id, length) = Graph::get_nearest_node(&test_graph.nodes,
+                                                   &current_node);
+        assert_eq!(length , 1.0);
+        assert_eq!(id , 1);
+    }
+
+    #[test]
     fn calculate_edge_length() {
         let node_1 = Node{x: -1.0, y: 0.0};
         let node_2 = Node{x: 0.0, y: 1.0};
-        assert_eq!(Graph::get_edge_length(node_1, node_2), 2.0_f32.sqrt());
+        assert_eq!(Graph::get_edge_length(&node_1, &node_2), 2.0_f32.sqrt());
     }
 }
