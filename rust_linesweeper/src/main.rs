@@ -1,9 +1,10 @@
-use std::collections::HashMap;
-
-use rust_linesweeper;
+use rust_linesweeper::graph;
 
 fn main() {
     let filepath = String::from("../graph/rust_wahde.json");
-    //let filepath = String::from("../graph/nodes_test.json");
-    let graph = rust_linesweeper::Graph::new(filepath);
+    let graph = graph::Graph::new(filepath);
+    println!(
+        "Nearest neigbour path: {}",
+        graph.length_nearest_neighbour_path(None)
+    );
 }
