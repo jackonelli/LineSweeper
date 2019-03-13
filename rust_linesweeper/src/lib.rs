@@ -3,28 +3,28 @@ extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
 
+use serde_json::Deserializer;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fs;
-use std::io::BufReader;
 use std::io::prelude::*;
-use serde_json::Deserializer;
+use std::io::BufReader;
 
 mod tools;
 
 #[derive(Deserialize, Clone)]
-pub struct Node{
+pub struct Node {
     x: f32,
     y: f32,
 }
 
 #[derive(Deserialize)]
-pub struct Edge{
+pub struct Edge {
     to: usize,
     from: usize,
 }
 
-pub struct Graph{
+pub struct Graph {
     pub number_of_nodes: usize,
     pub nodes: HashMap<usize, Node>,
     pub edges_connected: Vec<Edge>,
@@ -35,7 +35,6 @@ struct GraphData {
     nodes: Option<HashMap<usize, Node>>,
     edges: Option<Vec<Edge>>,
 }
-
 
 impl Graph {
     pub fn new(data_file: String) -> Graph {
@@ -49,8 +48,8 @@ impl Graph {
     }
 
     pub fn nodes_from_json(json_string: &String) -> HashMap<usize, Node> {
-        let graph_data: GraphData = serde_json::from_str(json_string).
-            expect("Could not parse json");
+        let graph_data: GraphData =
+            serde_json::from_str(json_string).expect("Could not parse json");
         let nodes = match graph_data.nodes {
             Some(nodes) => nodes,
             None => panic!("No nodes"),
@@ -59,8 +58,8 @@ impl Graph {
     }
 
     pub fn edges_from_json(json_string: &String) -> Vec<Edge> {
-        let graph_data: GraphData = serde_json::from_str(json_string).
-            expect("Could not parse json");
+        let graph_data: GraphData =
+            serde_json::from_str(json_string).expect("Could not parse json");
         let edges = match graph_data.edges {
             Some(edges) => edges,
             None => vec![],
@@ -70,21 +69,20 @@ impl Graph {
 
     pub fn length_nearest_neighbour_path(&self, start_id: Option<usize>) -> f32 {
         let mut unvisited_nodes = self.nodes.clone();
-        let mut current_node = unvisited_nodes
-            .remove(&start_id.unwrap_or(0))
-            .unwrap();
+        let mut current_node = unvisited_nodes.remove(&start_id.unwrap_or(0)).unwrap();
         let mut total_length = 0.0;
         for _ in 0..unvisited_nodes.len() {
-            let(nearest_id, length) = Graph::get_nearest_node(&unvisited_nodes,
-                                                              &current_node);
+            let (nearest_id, length) = Graph::get_nearest_node(&unvisited_nodes, &current_node);
             total_length += length;
             current_node = unvisited_nodes.remove(&nearest_id).unwrap();
         }
         total_length
     }
 
-    fn get_nearest_node(unvisited_nodes: &HashMap<usize, Node>,
-                        current_node: &Node) -> (usize, f32) {
+    fn get_nearest_node(
+        unvisited_nodes: &HashMap<usize, Node>,
+        current_node: &Node,
+    ) -> (usize, f32) {
         let mut shortest_length = std::f32::INFINITY;
         let mut length: f32;
         let mut nearest_id = 0;
@@ -118,8 +116,8 @@ mod tests {
     use super::*;
     #[test]
     fn read_json_to_nodes() {
-    let data = String::from(
-                r#"{
+        let data = String::from(
+            r#"{
                     "nodes": {
                         "1": {
                             "x": 43.0,
@@ -130,8 +128,8 @@ mod tests {
                             "y": 0.1
                         }
                     }
-                  }"#
-                  );
+                  }"#,
+        );
         let test_graph = Graph::nodes_from_json(&data);
         assert_eq!(test_graph.len(), 2);
     }
@@ -139,11 +137,11 @@ mod tests {
     #[test]
     fn calculate_nearest_path() {
         let mut tmp_nodes = HashMap::new();
-        tmp_nodes.insert(0, Node{x: 0.0, y: 0.0});
-        tmp_nodes.insert(1, Node{x: 0.0, y: 1.0});
-        tmp_nodes.insert(2, Node{x: 1.0, y: 1.0});
-        tmp_nodes.insert(3, Node{x: 1.0, y: 2.0});
-        let test_graph =  Graph{
+        tmp_nodes.insert(0, Node { x: 0.0, y: 0.0 });
+        tmp_nodes.insert(1, Node { x: 0.0, y: 1.0 });
+        tmp_nodes.insert(2, Node { x: 1.0, y: 1.0 });
+        tmp_nodes.insert(3, Node { x: 1.0, y: 2.0 });
+        let test_graph = Graph {
             number_of_nodes: 4,
             nodes: tmp_nodes,
             edges_connected: vec![],
@@ -154,25 +152,24 @@ mod tests {
     #[test]
     fn get_next_node() {
         let mut tmp_nodes = HashMap::new();
-        tmp_nodes.insert(1, Node{x: 0.0, y: 1.0});
-        tmp_nodes.insert(2, Node{x: 1.0, y: 1.0});
-        tmp_nodes.insert(3, Node{x: 1.0, y: 2.0});
-        let test_graph =  Graph{
+        tmp_nodes.insert(1, Node { x: 0.0, y: 1.0 });
+        tmp_nodes.insert(2, Node { x: 1.0, y: 1.0 });
+        tmp_nodes.insert(3, Node { x: 1.0, y: 2.0 });
+        let test_graph = Graph {
             number_of_nodes: 4,
             nodes: tmp_nodes,
             edges_connected: vec![],
         };
-        let current_node = Node{x: 0.0, y: 0.0};
-        let (id, length) = Graph::get_nearest_node(&test_graph.nodes,
-                                                   &current_node);
-        assert_eq!(length , 1.0);
-        assert_eq!(id , 1);
+        let current_node = Node { x: 0.0, y: 0.0 };
+        let (id, length) = Graph::get_nearest_node(&test_graph.nodes, &current_node);
+        assert_eq!(length, 1.0);
+        assert_eq!(id, 1);
     }
 
     #[test]
     fn calculate_edge_length() {
-        let node_1 = Node{x: -1.0, y: 0.0};
-        let node_2 = Node{x: 0.0, y: 1.0};
+        let node_1 = Node { x: -1.0, y: 0.0 };
+        let node_2 = Node { x: 0.0, y: 1.0 };
         assert_eq!(Graph::get_edge_length(&node_1, &node_2), 2.0_f32.sqrt());
     }
 }
