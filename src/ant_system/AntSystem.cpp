@@ -134,6 +134,7 @@ unsigned int AntSystem::GetNextNode(const unsigned int currentNode, const std::u
 void AntSystem::CalculateTransitionProbability(std::vector<std::pair<unsigned int, float>>& transitionProbability, const std::unordered_set<unsigned int>& unvisitedNodes, const unsigned int currentNode) const{
   float totalProbability = 0;
   for(auto node : unvisitedNodes) { // TODO: Sort while creating
+    // BUG: alpha and beta should be exponents
     float tmpProbability = GetPheromoneLevel(currentNode, node) * alpha_ * graph_.GetVisibility(currentNode, node) * beta_;
     transitionProbability.push_back(std::make_pair(node, tmpProbability));
     totalProbability += tmpProbability;

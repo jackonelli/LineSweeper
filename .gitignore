@@ -3,6 +3,8 @@ web/ext/*
 web/img/store/
 web/script/*
 tags
+tags.temp
+tags.lock
 *json.hpp
 
 # RUST

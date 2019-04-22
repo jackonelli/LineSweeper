@@ -1,12 +1,12 @@
+use crate::tools;
 use serde_derive::Deserialize;
 use serde_json;
-
+use std::cmp::PartialEq;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-use crate::tools;
-
-#[derive(Deserialize, Clone)]
+// TODO: Node key as its own type instead of usize
+#[derive(Deserialize, Clone, PartialEq)]
 pub struct Node {
     x: f32,
     y: f32,
@@ -61,6 +61,16 @@ impl Graph {
         edges
     }
 
+    pub fn add_node(&mut self, x: f32, y: f32) {
+        let candidate = Node { x, y };
+        for (_, node) in self.nodes.iter() {
+            if candidate == *node {
+                return;
+            };
+        }
+        self.nodes.insert(self.number_of_nodes, candidate);
+        self.number_of_nodes += 1;
+    }
     pub fn length_nearest_neighbour_path(&self, start_id: Option<usize>) -> f32 {
         let mut unvisited_nodes = self.nodes.clone();
         let mut current_node = unvisited_nodes.remove(&start_id.unwrap_or(0)).unwrap();
@@ -90,18 +100,10 @@ impl Graph {
         (nearest_id, shortest_length)
     }
 
-    fn get_edge_length(node_1: &Node, node_2: &Node) -> f32 {
+    pub fn get_edge_length(node_1: &Node, node_2: &Node) -> f32 {
         let dx = node_1.x - node_2.x;
         let dy = node_1.y - node_2.y;
         (dx * dx + dy * dy).sqrt()
-    }
-
-    pub fn reset_unvisited_nodes(&self) -> HashSet<usize> {
-        let mut unvisited_nodes = HashSet::new();
-        for key in self.nodes.keys() {
-            unvisited_nodes.insert(*key);
-        }
-        unvisited_nodes
     }
 }
 
