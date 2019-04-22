@@ -1,9 +1,7 @@
 use crate::tools;
 use serde_derive::Deserialize;
 use serde_json;
-use std::cmp::PartialEq;
 use std::collections::HashMap;
-use std::collections::HashSet;
 
 // TODO: Node key as its own type instead of usize
 #[derive(Deserialize, Clone, PartialEq)]
@@ -31,7 +29,7 @@ struct GraphData {
 }
 
 impl Graph {
-    pub fn new(data_file: String) -> Graph {
+    pub fn new(data_file: &str) -> Graph {
         let json_string = tools::io::read_file(&data_file);
         let tmp_nodes = Graph::nodes_from_json(&json_string);
         Graph {
@@ -41,7 +39,7 @@ impl Graph {
         }
     }
 
-    pub fn nodes_from_json(json_string: &String) -> HashMap<usize, Node> {
+    fn nodes_from_json(json_string: &str) -> HashMap<usize, Node> {
         let graph_data: GraphData =
             serde_json::from_str(json_string).expect("Could not parse json");
         let nodes = match graph_data.nodes {
@@ -51,7 +49,7 @@ impl Graph {
         nodes
     }
 
-    pub fn edges_from_json(json_string: &String) -> Vec<Edge> {
+    fn edges_from_json(json_string: &str) -> Vec<Edge> {
         let graph_data: GraphData =
             serde_json::from_str(json_string).expect("Could not parse json");
         let edges = match graph_data.edges {
@@ -61,7 +59,7 @@ impl Graph {
         edges
     }
 
-    pub fn add_node(&mut self, x: f32, y: f32) {
+    fn add_node(&mut self, x: f32, y: f32) {
         let candidate = Node { x, y };
         for (_, node) in self.nodes.iter() {
             if candidate == *node {
@@ -71,6 +69,23 @@ impl Graph {
         self.nodes.insert(self.number_of_nodes, candidate);
         self.number_of_nodes += 1;
     }
+
+    pub fn calulate_path_length(&self, path: &[usize]) -> f32 {
+        let mut path_length = 0.0;
+        for node_key in 1..path.len() {
+            let current_node = match self.nodes.get(&(path[node_key - 1])) {
+                Some(current_node) => current_node,
+                None => panic!("Node does not exist"),
+            };
+            let next_node = match self.nodes.get(&(path[node_key])) {
+                Some(next_node) => next_node,
+                None => panic!("Node does not exist"),
+            };
+            path_length += Graph::get_edge_length(&current_node, &next_node);
+        }
+        path_length
+    }
+
     pub fn length_nearest_neighbour_path(&self, start_id: Option<usize>) -> f32 {
         let mut unvisited_nodes = self.nodes.clone();
         let mut current_node = unvisited_nodes.remove(&start_id.unwrap_or(0)).unwrap();
@@ -144,9 +159,24 @@ mod tests {
         };
         assert_eq!(test_graph.length_nearest_neighbour_path(Some(0)), 3.0);
     }
+    #[test]
+    fn calc_path_length() {
+        let mut tmp_nodes = HashMap::new();
+        tmp_nodes.insert(1, Node { x: 0.0, y: 1.0 });
+        tmp_nodes.insert(2, Node { x: 1.0, y: 1.0 });
+        tmp_nodes.insert(3, Node { x: 1.0, y: 2.0 });
+        let test_graph = Graph {
+            number_of_nodes: 3,
+            nodes: tmp_nodes,
+            edges_connected: vec![],
+        };
+        let path = vec![2, 3, 1];
+        let path_length = test_graph.calulate_path_length(&path);
+        assert_eq!(path_length, 1.0 + 2.0_f32.sqrt());
+    }
 
     #[test]
-    fn get_next_node() {
+    fn get_nearest_node() {
         let mut tmp_nodes = HashMap::new();
         tmp_nodes.insert(1, Node { x: 0.0, y: 1.0 });
         tmp_nodes.insert(2, Node { x: 1.0, y: 1.0 });
