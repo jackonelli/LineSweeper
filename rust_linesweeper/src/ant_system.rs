@@ -85,7 +85,13 @@ impl AntSystem {
         vec![0]
     }
 
-    fn update_pheromone_leves(&mut self, delta_pheromone_levels: &[f32]) {}
+    fn update_pheromone_leves(&mut self, delta_pheromone_levels: &[f32]) {
+        self.pheromone_levels = self
+            .pheromone_levels
+            .iter()
+            .map(|&el| (1.0 - self.evaporation) * el)
+            .collect();
+    }
 
     fn get_next_node(&self, current_node_key: usize, unvisited_nodes: &HashSet<usize>) -> usize {
         let mut transition_probabilities =
